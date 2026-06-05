@@ -91,3 +91,13 @@ To authorize:
 - Since Spotify audio features, related artists, and artist genres are deprecated, SoundPrint should avoid depending on those features.
 - For the MVP, recommendations should be based on the Spotify data I can still access.
 - One approach would be to find candidates of songs/artists that overlap with the user's top artists, top tracks, playlists, and recently played tracks.
+
+### Frontend / Backend Communication
+
+- The React frontend will handle user interface.
+- The FastAPI backend will handle Spotify authentication, API requests, data analysis, and recommendation logic.
+- The frontend will call backend API routes using HTTP requests
+- The backend will return JSON data to the frontend.
+- A REST API is a common way for two systems to communicate over the internet.
+- The frontend can use REST API routes to request data from the backend.
+- Some HTTP methods include `GET` for reading data and `POST` for sending data.

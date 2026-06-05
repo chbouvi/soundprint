@@ -46,3 +46,10 @@ Detailed research notes are in `research-notes.md`
 ## MVP Definition
 
 The first complete version of SoundPrint is done when a user can connect their Spotify account, view an analysis of their top tracks/artists, see visualizations of their music taste through graphs or maps, receive similarity-based recommendations, and get an AI-powered explanation grounded in their listening data.
+
+## First Build Milestones
+
+### 1. Project Setup
+- Create React frontend using TypeScript
+- Create FastAPI backend using Python
+- Confirm frontend can call backend and receive JSON
