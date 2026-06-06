@@ -50,6 +50,12 @@ The first complete version of SoundPrint is done when a user can connect their S
 ## First Build Milestones
 
 ### 1. Project Setup
-- Create React frontend using TypeScript
-- Create FastAPI backend using Python
-- Confirm frontend can call backend and receive JSON
+- [x] Create React frontend using TypeScript
+- [x] Create FastAPI backend using Python
+- [x] Confirm frontend can call backend and receive JSON
+
+### 2. Spotify Developer Setup
+- [ ] Create Spotify Developer app
+- [ ] Add local redirect URI (Uniform Resource Indicator)
+- [ ] Store Spotify Client ID safely
+- [ ] Understand which OAuth values belong in frontend vs backend
