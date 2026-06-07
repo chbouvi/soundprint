@@ -101,3 +101,12 @@ To authorize:
 - A REST API is a common way for two systems to communicate over the internet.
 - The frontend can use REST API routes to request data from the backend.
 - Some HTTP methods include `GET` for reading data and `POST` for sending data.
+
+### OAuth Progress
+
+- Frontend can generate a PKCE code verifier and code challenge.
+- Frontend stores the code verifier in localStorage before redirecting to Spotify.
+- Frontend redirects to Spotify's `/authorize` endpoint with required PKCE parameters.
+- After approval, Spotify redirects back to `/callback` with an authorization code.
+- Frontend can read the authorization code from `window.location.search`.
+- During development, the frontend should be opened at `http://127.0.0.1:5173`, not `http://localhost:5173`, because Spotify redirects to `127.0.0.1` and localStorage is specific.

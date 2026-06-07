@@ -61,6 +61,6 @@ The first complete version of SoundPrint is done when a user can connect their S
 - [ ] Understand which OAuth values belong in frontend vs backend
 
 - Created a Spotify Developer app for SoundPrint
-- Redirect URI: `http://127.0.0.5173/callback`
+- Redirect URI: `http://127.0.0.1:5173/callback`
 - Selected API: Web API
 - SoundPrint uses PKCE, so Client Secret should not be exposed in frontend code
