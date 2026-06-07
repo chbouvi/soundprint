@@ -116,6 +116,30 @@ function App() {
     }
   }, [accessToken])
 
+  const [topArtistsStatus, setTopArtistsStatus] = useState("...")
+  const [topArtists, setTopArtists] = useState<any[]>([])
+
+  useEffect(() => {
+    if (accessToken) {
+      fetch("https://api.spotify.com/v1/me/top/artists?limit=10", {
+        method: "GET",
+        headers: {
+          "Authorization": "Bearer " + accessToken
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.items) {
+            setTopArtistsStatus("Top artists received")
+            setTopArtists(data.items)
+          } else {
+            setTopArtistsStatus("Top artists request failed")
+          }
+        })
+        .catch(() => setTopArtistsStatus("Top artists request failed"))
+    }
+  }, [accessToken])
+
   return (
     <main>
       <h1>SoundPrint</h1>
@@ -139,11 +163,23 @@ function App() {
       <ul>
         {topTracks.map(track => (
           <li key={track.id}>
-            {track.name}
+            {track.name} by {track.artists[0].name}
           </li>
         ))}
       </ul>
-      
+
+      <p>
+        Top artists status: {topArtistsStatus}
+      </p>
+
+      <ul>
+        {topArtists.map(artist => (
+          <li key={artist.id}>
+            {artist.name}
+          </li>
+        ))}
+      </ul>
+
     </main>
   )
 }
