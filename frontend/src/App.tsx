@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import './App.css'
 
 function App() {
@@ -93,6 +93,7 @@ function App() {
   }, [code, codeVerifier])
 
   const [topTracksStatus, setTopTracksStatus] = useState("...")
+  const [topTracks, setTopTracks] = useState<any[]>([])
 
   useEffect(() => {
     if (accessToken) {
@@ -106,6 +107,7 @@ function App() {
         .then(data => {
           if (data.items) {
             setTopTracksStatus("Top tracks received")
+            setTopTracks(data.items)
           } else {
             setTopTracksStatus("Top tracks request failed")
           }
@@ -133,6 +135,15 @@ function App() {
       <p> 
         Top tracks status: {topTracksStatus}
       </p>
+
+      <ul>
+        {topTracks.map(track => (
+          <li key={track.id}>
+            {track.name}
+          </li>
+        ))}
+      </ul>
+      
     </main>
   )
 }
