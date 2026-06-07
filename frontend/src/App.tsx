@@ -59,7 +59,8 @@ function App() {
 
   const codeVerifier = localStorage.getItem("code_verifier")
 
-  const [tokenStatus, setTokenStatus] = useState("Token...")
+  const [tokenStatus, setTokenStatus] = useState("...")
+  const [accessToken, setAccessToken] = useState<string | null>(null)
 
   useEffect(() => {
     if (code && codeVerifier) {
@@ -80,6 +81,7 @@ function App() {
         .then(data => {
           if (data.access_token) {
             setTokenStatus("Token received")
+            setAccessToken(data.access_token)
           } else if (data.error) {
             setTokenStatus(data.error)
           } else {
@@ -89,6 +91,28 @@ function App() {
         .catch(() => setTokenStatus("Token request failed"))
     }
   }, [code, codeVerifier])
+
+  const [topTracksStatus, setTopTracksStatus] = useState("...")
+
+  useEffect(() => {
+    if (accessToken) {
+      fetch("https://api.spotify.com/v1/me/top/tracks?limit=10", {
+        method: "GET",
+        headers: {
+          "Authorization": "Bearer " + accessToken
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.items) {
+            setTopTracksStatus("Top tracks received")
+          } else {
+            setTopTracksStatus("Top tracks request failed")
+          }
+        })
+        .catch(() => setTopTracksStatus("Top tracks request failed"))
+    }
+  }, [accessToken])
 
   return (
     <main>
@@ -104,6 +128,10 @@ function App() {
 
       <p>
         Token status: {tokenStatus}
+      </p>
+
+      <p> 
+        Top tracks status: {topTracksStatus}
       </p>
     </main>
   )
