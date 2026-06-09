@@ -142,7 +142,7 @@ function App() {
     <main>
       <h1>SoundPrint</h1>
 
-      <button onClick={handleConnectSpotify}>
+      <button className="connect-button" onClick={handleConnectSpotify}>
         Connect Spotify
       </button>
 
