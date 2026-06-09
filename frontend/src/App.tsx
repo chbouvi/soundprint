@@ -12,15 +12,6 @@ type Track = {
 }
 
 function App() {
-  const [message, setMessage] = useState("Checking backend...")
-
-  useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/health")
-      .then(response => response.json())
-      .then(data => setMessage(data.message))
-      .catch(() => setMessage("Error connecting to backend"))
-  }, [])
-
   const generateRandomString = (length: number) => {
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const values = crypto.getRandomValues(new Uint8Array(length));
@@ -155,37 +146,35 @@ function App() {
         Connect Spotify
       </button>
 
-      <p>
-        Backend status: {message}
-      </p>
-
       {errorMessage && (
         <p>Error: {errorMessage}</p>
       )}
 
-      <h3>
-        Top Tracks
-      </h3>
+      <div className="taste-grid">
+        <section>
+          <h3>Top Tracks</h3>
 
-      <ul>
-        {topTracks.map(track => (
-          <li key={track.id}>
-            {track.name} by {track.artists[0].name}
-          </li>
-        ))}
-      </ul>
+          <ul>
+            {topTracks.map(track => (
+              <li key={track.id}>
+                {track.name} by {track.artists[0].name}
+              </li>
+            ))}
+          </ul>
+        </section>
 
-      <h3>
-        Top Artists
-      </h3>
-      
-      <ul>
-        {topArtists.map(artist => (
-          <li key={artist.id}>
-            {artist.name}
-          </li>
-        ))}
-      </ul>
+        <section>
+          <h3>Top Artists</h3>
+
+          <ul>
+            {topArtists.map(artist => (
+              <li key={artist.id}>
+                {artist.name}
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
 
     </main>
   )
