@@ -1,6 +1,16 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
+type Artist = {
+  id: string
+  name: string
+}
+type Track = {
+  id: string
+  name: string
+  artists: Artist[]
+}
+
 function App() {
   const [message, setMessage] = useState("Checking backend...")
 
@@ -93,7 +103,7 @@ function App() {
   }, [code, codeVerifier])
 
   const [topTracksStatus, setTopTracksStatus] = useState("...")
-  const [topTracks, setTopTracks] = useState<any[]>([])
+  const [topTracks, setTopTracks] = useState<Track[]>([])
 
   useEffect(() => {
     if (accessToken) {
@@ -117,7 +127,7 @@ function App() {
   }, [accessToken])
 
   const [topArtistsStatus, setTopArtistsStatus] = useState("...")
-  const [topArtists, setTopArtists] = useState<any[]>([])
+  const [topArtists, setTopArtists] = useState<Artist[]>([])
 
   useEffect(() => {
     if (accessToken) {
