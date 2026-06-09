@@ -69,7 +69,7 @@ function App() {
 
   const codeVerifier = localStorage.getItem("code_verifier")
 
-  const [tokenStatus, setTokenStatus] = useState("...")
+  const [errorMessage, setErrorMessage] = useState<string>("")
   const [accessToken, setAccessToken] = useState<string | null>(null)
 
   useEffect(() => {
@@ -90,19 +90,19 @@ function App() {
         .then(response => response.json())
         .then(data => {
           if (data.access_token) {
-            setTokenStatus("Token received")
             setAccessToken(data.access_token)
+            setErrorMessage("")
+            window.history.replaceState({}, "", "/")
           } else if (data.error) {
-            setTokenStatus(data.error)
+            setErrorMessage(data.error)
           } else {
-            setTokenStatus("Token request failed")
+            setErrorMessage("Could not connect to Spotify.")
           }
         })
-        .catch(() => setTokenStatus("Token request failed"))
+        .catch(() => setErrorMessage("Could not connect to Spotify."))
     }
   }, [code, codeVerifier])
 
-  const [topTracksStatus, setTopTracksStatus] = useState("...")
   const [topTracks, setTopTracks] = useState<Track[]>([])
 
   useEffect(() => {
@@ -116,17 +116,15 @@ function App() {
         .then(response => response.json())
         .then(data => {
           if (data.items) {
-            setTopTracksStatus("Top tracks received")
             setTopTracks(data.items)
           } else {
-            setTopTracksStatus("Top tracks request failed")
+            setErrorMessage("Could not load top tracks.")
           }
         })
-        .catch(() => setTopTracksStatus("Top tracks request failed"))
+        .catch(() => setErrorMessage("Could not load top tracks."))
     }
   }, [accessToken])
 
-  const [topArtistsStatus, setTopArtistsStatus] = useState("...")
   const [topArtists, setTopArtists] = useState<Artist[]>([])
 
   useEffect(() => {
@@ -140,13 +138,12 @@ function App() {
         .then(response => response.json())
         .then(data => {
           if (data.items) {
-            setTopArtistsStatus("Top artists received")
             setTopArtists(data.items)
           } else {
-            setTopArtistsStatus("Top artists request failed")
+            setErrorMessage("Could not load top artists.")
           }
         })
-        .catch(() => setTopArtistsStatus("Top artists request failed"))
+        .catch(() => setErrorMessage("Could not load top artists."))
     }
   }, [accessToken])
 
@@ -162,13 +159,13 @@ function App() {
         Backend status: {message}
       </p>
 
-      <p>
-        Token status: {tokenStatus}
-      </p>
+      {errorMessage && (
+        <p>Error: {errorMessage}</p>
+      )}
 
-      <p> 
-        Top tracks status: {topTracksStatus}
-      </p>
+      <h3>
+        Top Tracks
+      </h3>
 
       <ul>
         {topTracks.map(track => (
@@ -178,10 +175,10 @@ function App() {
         ))}
       </ul>
 
-      <p>
-        Top artists status: {topArtistsStatus}
-      </p>
-
+      <h3>
+        Top Artists
+      </h3>
+      
       <ul>
         {topArtists.map(artist => (
           <li key={artist.id}>
