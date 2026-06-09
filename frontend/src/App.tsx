@@ -60,6 +60,8 @@ function App() {
 
   const codeVerifier = localStorage.getItem("code_verifier")
 
+  const [timeRange, setTimeRange] = useState("medium_term")
+
   const [errorMessage, setErrorMessage] = useState<string>("")
   const [accessToken, setAccessToken] = useState<string | null>(null)
 
@@ -98,7 +100,7 @@ function App() {
 
   useEffect(() => {
     if (accessToken) {
-      fetch("https://api.spotify.com/v1/me/top/tracks?limit=10", {
+      fetch(`https://api.spotify.com/v1/me/top/tracks?limit=10&time_range=${timeRange}`, {
         method: "GET",
         headers: {
           "Authorization": "Bearer " + accessToken
@@ -114,13 +116,13 @@ function App() {
         })
         .catch(() => setErrorMessage("Could not load top tracks."))
     }
-  }, [accessToken])
+  }, [accessToken, timeRange])
 
   const [topArtists, setTopArtists] = useState<Artist[]>([])
 
   useEffect(() => {
     if (accessToken) {
-      fetch("https://api.spotify.com/v1/me/top/artists?limit=10", {
+      fetch(`https://api.spotify.com/v1/me/top/artists?limit=10&time_range=${timeRange}`, {
         method: "GET",
         headers: {
           "Authorization": "Bearer " + accessToken
@@ -136,15 +138,30 @@ function App() {
         })
         .catch(() => setErrorMessage("Could not load top artists."))
     }
-  }, [accessToken])
+  }, [accessToken, timeRange])
 
   return (
     <main>
       <h1>SoundPrint</h1>
+      <h2>Your music taste, simplified</h2>
 
       <button className="connect-button" onClick={handleConnectSpotify}>
         Connect Spotify
       </button>
+
+      <div className="time-range-control">
+        <label htmlFor="time-range">Time range</label>
+
+        <select
+          id="time-range"
+          value={timeRange}
+          onChange={event => setTimeRange(event.target.value)}
+        >
+          <option value="short_term">Last 4 weeks</option>
+          <option value="medium_term">Last 6 months</option>
+          <option value="long_term">All time</option>
+        </select>
+      </div>
 
       {errorMessage && (
         <p>Error: {errorMessage}</p>
@@ -154,25 +171,25 @@ function App() {
         <section>
           <h3>Top Tracks</h3>
 
-          <ul>
+          <ol>
             {topTracks.map(track => (
               <li key={track.id}>
                 {track.name} by {track.artists[0].name}
               </li>
             ))}
-          </ul>
+          </ol>
         </section>
 
         <section>
           <h3>Top Artists</h3>
 
-          <ul>
+          <ol>
             {topArtists.map(artist => (
               <li key={artist.id}>
                 {artist.name}
               </li>
             ))}
-          </ul>
+          </ol>
         </section>
       </div>
 
