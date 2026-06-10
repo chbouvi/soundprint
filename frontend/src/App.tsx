@@ -182,6 +182,11 @@ function App() {
       mostRepeatedArtistCount = count
     }
   })
+  
+  const trackArtistIds = topTracks.map(track => track.artists[0].id)
+  const trackArtistSet = new Set(trackArtistIds)
+  const overlappingArtists = topArtists.filter(artist => trackArtistSet.has(artist.id))
+  const overlapCount = overlappingArtists.length
 
   return (
     <main>
@@ -231,11 +236,16 @@ function App() {
           <strong>{artistVariety}%</strong>
           <span className="stat-caption">across your top tracks</span>
         </div>
+        <div className="stat-card">
+          <span className="stat-label">Top Artist Overlap</span>
+          <strong>{overlapCount}</strong>
+          <span className="stat-caption">top artists also in your top tracks</span>
+        </div>
       </section>
       )}
 
       {topTracks.length === 0 && topArtists.length === 0 ? (
-        <p>Connect Spotify to generate your music profile.</p>
+        <p className="connect-spotify">Connect Spotify to generate your music profile.</p>
       ) : (
         <div className="taste-grid">
           <section>
