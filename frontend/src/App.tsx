@@ -149,49 +149,55 @@ function App() {
         Connect Spotify
       </button>
 
-      <div className="time-range-control">
-        <label htmlFor="time-range">Time range</label>
+      {accessToken && (
+        <div className="time-range-control">
+          <label htmlFor="time-range">Time range</label>
 
-        <select
-          id="time-range"
-          value={timeRange}
-          onChange={event => setTimeRange(event.target.value)}
-        >
-          <option value="short_term">Last 4 weeks</option>
-          <option value="medium_term">Last 6 months</option>
-          <option value="long_term">All time</option>
-        </select>
-      </div>
+          <select
+            id="time-range"
+            value={timeRange}
+            onChange={event => setTimeRange(event.target.value)}
+          >
+            <option value="short_term">Last 4 weeks</option>
+            <option value="medium_term">Last 6 months</option>
+            <option value="long_term">All time</option>
+          </select>
+        </div>
+      )}
 
       {errorMessage && (
         <p>Error: {errorMessage}</p>
       )}
 
-      <div className="taste-grid">
-        <section>
-          <h3>Top Tracks</h3>
+      {topTracks.length === 0 && topArtists.length === 0 ? (
+        <p>Connect Spotify to generate your music profile.</p>
+      ) : (
+        <div className="taste-grid">
+          <section>
+            <h3>Top Tracks</h3>
 
-          <ol>
-            {topTracks.map(track => (
-              <li key={track.id}>
-                {track.name} by {track.artists[0].name}
-              </li>
-            ))}
-          </ol>
-        </section>
+            <ol>
+              {topTracks.map(track => (
+                <li key={track.id}>
+                  {track.name} by {track.artists[0].name}
+                </li>
+              ))}
+            </ol>
+          </section>
 
-        <section>
-          <h3>Top Artists</h3>
+          <section>
+            <h3>Top Artists</h3>
 
-          <ol>
-            {topArtists.map(artist => (
-              <li key={artist.id}>
-                {artist.name}
-              </li>
-            ))}
-          </ol>
-        </section>
-      </div>
+            <ol>
+              {topArtists.map(artist => (
+                <li key={artist.id}>
+                  {artist.name}
+                </li>
+              ))}
+            </ol>
+          </section>
+        </div>
+      )}
 
     </main>
   )
