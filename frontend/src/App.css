@@ -111,3 +111,7 @@ h2 {
   width: 2rem;
   text-align: right;
 }
+
+.artist-name {
+  color: #d1d5db;
+}
