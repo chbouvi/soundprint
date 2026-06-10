@@ -92,3 +92,22 @@ h2 {
   color: #8f96a3;
   font-size: 0.9em;
 }
+
+.artist-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
+.artist-image {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.artist-rank {
+  width: 2rem;
+  text-align: right;
+}

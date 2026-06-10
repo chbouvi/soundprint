@@ -1,9 +1,15 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
+
+type ArtistImage = {
+  url: string
+}
+
 type Artist = {
   id: string
   name: string
+  images: ArtistImage[]
 }
 
 type AlbumImage = {
@@ -119,7 +125,6 @@ function App() {
         .then(response => response.json())
         .then(data => {
           if (data.items) {
-            console.log(data.items[0])
             setTopTracks(data.items)
           } else {
             setErrorMessage("Could not load top tracks.")
@@ -205,9 +210,11 @@ function App() {
             <h3>Top Artists</h3>
 
             <ol>
-              {topArtists.map(artist => (
-                <li key={artist.id}>
-                  {artist.name}
+              {topArtists.map((artist, index) => (
+                <li className="artist-row" key={artist.id}>
+                  <span className="artist-rank">{index + 1}</span>
+                  <img className="artist-image" src={artist.images[2].url} alt={`Image of ${artist.name}`}/>
+                  <span className="artist-name">{artist.name}</span>
                 </li>
               ))}
             </ol>
