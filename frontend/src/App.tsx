@@ -159,6 +159,7 @@ function App() {
   const artistNames = topTracks.map(track => track.artists[0].name)
   const uniqueArtists = new Set(artistNames)
   const uniqueArtistCount = uniqueArtists.size
+  const artistVariety = topTracks.length > 0 ? Math.round((uniqueArtistCount / topTracks.length) * 100) : 0
 
   const artistCounts: Record<string, number> = {}
 
@@ -182,17 +183,15 @@ function App() {
     }
   })
 
-  
-
   return (
     <main>
       <h1>SoundPrint</h1>
       <h2>Your music taste, simplified</h2>
 
       {!accessToken && (
-      <button className="connect-button" onClick={handleConnectSpotify}>
-        Connect Spotify
-      </button>
+        <button className="connect-button" onClick={handleConnectSpotify}>
+          Connect Spotify
+        </button>
       )}
 
       {accessToken && (
@@ -226,6 +225,11 @@ function App() {
           <span className="stat-label">Most Repeated Artist</span>
           <strong>{mostRepeatedArtist}</strong>
           <span className="stat-caption">appears in {mostRepeatedArtistCount} top tracks</span>
+        </div>
+        <div className="stat-card">
+          <span className="stat-label">Artist Variety</span>
+          <strong>{artistVariety}%</strong>
+          <span className="stat-caption">across your top tracks</span>
         </div>
       </section>
       )}
