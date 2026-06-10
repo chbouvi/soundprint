@@ -5,10 +5,20 @@ type Artist = {
   id: string
   name: string
 }
+
+type AlbumImage = {
+  url: string
+}
+
+type Album = {
+  images: AlbumImage[]
+}
+
 type Track = {
   id: string
   name: string
   artists: Artist[]
+  album: Album
 }
 
 function App() {
@@ -109,6 +119,7 @@ function App() {
         .then(response => response.json())
         .then(data => {
           if (data.items) {
+            console.log(data.items[0])
             setTopTracks(data.items)
           } else {
             setErrorMessage("Could not load top tracks.")
@@ -177,9 +188,14 @@ function App() {
             <h3>Top Tracks</h3>
 
             <ol>
-              {topTracks.map(track => (
-                <li key={track.id}>
-                  {track.name} by {track.artists[0].name}
+              {topTracks.map((track, index) => (
+                <li className="track-row" key={track.id}>
+                  <span className="track-rank">{index + 1}</span>
+                  <img className="album-cover" src={track.album.images[2].url} alt={`${track.name} album cover`}/>
+                  <div className="track-info">
+                    <span className="track-title">{track.name}</span>
+                    <span className="track-artist">{track.artists[0].name}</span>
+                  </div>
                 </li>
               ))}
             </ol>

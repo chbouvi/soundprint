@@ -59,3 +59,36 @@ h2 {
   list-style-position: inside;
   padding: 0;
 }
+
+.track-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
+.album-cover {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.track-rank {
+  width: 2rem;
+  text-align: right;
+}
+
+.track-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.track-title {
+  color: #d1d5db;
+}
+
+.track-artist {
+  color: #8f96a3;
+  font-size: 0.9em;
+}
