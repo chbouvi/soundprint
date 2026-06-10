@@ -29,14 +29,60 @@ h2 {
 }
 
 .time-range-control {
-  margin-top: 10px;
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.time-range-control label {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.time-range-control select {
+  background: #1f1f26;
+  color: #d1d5db;
+  border: 1px solid #2d2d36;
+  border-radius: 9999px;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.stats-panel {
+  display: flex;
+  justify-content: center;
+  margin: 24px 0 0;
+}
+
+.stat-card {
+  background: #1f1f26;
+  border: 1px solid #2d2d36;
+  border-radius: 16px;
+  padding: 18px 28px;
+  min-width: 180px;
+}
+
+.stat-label,
+.stat-caption {
+  display: block;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+.stat-card strong {
+  display: block;
+  color: #f3f4f6;
+  font-size: 32px;
+  margin: 6px 0;
 }
 
 .taste-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
-  margin-top: 30px;
+  margin-top: 22px;
 }
 
 .taste-grid section {

@@ -156,14 +156,44 @@ function App() {
     }
   }, [accessToken, timeRange])
 
+  const artistNames = topTracks.map(track => track.artists[0].name)
+  const uniqueArtists = new Set(artistNames)
+  const uniqueArtistCount = uniqueArtists.size
+
+  const artistCounts: Record<string, number> = {}
+
+  topTracks.forEach(track => {
+    const artistName = track.artists[0].name
+
+    if (artistCounts[artistName]) {
+      artistCounts[artistName] += 1
+    } else {
+      artistCounts[artistName] = 1
+    }
+  })
+
+  let mostRepeatedArtist = ""
+  let mostRepeatedArtistCount = 0
+
+  Object.entries(artistCounts).forEach(([artistName, count]) => {
+    if (count > mostRepeatedArtistCount) {
+      mostRepeatedArtist = artistName
+      mostRepeatedArtistCount = count
+    }
+  })
+
+  
+
   return (
     <main>
       <h1>SoundPrint</h1>
       <h2>Your music taste, simplified</h2>
 
+      {!accessToken && (
       <button className="connect-button" onClick={handleConnectSpotify}>
         Connect Spotify
       </button>
+      )}
 
       {accessToken && (
         <div className="time-range-control">
@@ -183,6 +213,21 @@ function App() {
 
       {errorMessage && (
         <p>Error: {errorMessage}</p>
+      )}
+      
+      {accessToken && (
+      <section className="stats-panel">
+        <div className="stat-card">
+          <span className="stat-label">Unique Artists</span>
+          <strong>{uniqueArtistCount}</strong>
+          <span className="stat-caption">across your top tracks</span>
+        </div>
+        <div className="stat-card">
+          <span className="stat-label">Most Repeated Artist</span>
+          <strong>{mostRepeatedArtist}</strong>
+          <span className="stat-caption">appears in {mostRepeatedArtistCount} top tracks</span>
+        </div>
+      </section>
       )}
 
       {topTracks.length === 0 && topArtists.length === 0 ? (
