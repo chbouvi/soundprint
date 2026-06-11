@@ -43,11 +43,17 @@ def analyze_taste(profile: TasteAnalysisRequest):
         if count > most_repeated_artist_count:
             most_repeated_artist = artist_name
             most_repeated_artist_count = count
+    
+    if len(profile.top_track_artists) > 0:
+        artist_variety = round((len(unique_artists) / len(profile.top_track_artists)) * 100)
+    else:
+        artist_variety = 0
 
     return {
         "unique_artist_count": len(unique_artists),
         "most_repeated_artist": most_repeated_artist,
-        "most_repeated_artist_count": most_repeated_artist_count
+        "most_repeated_artist_count": most_repeated_artist_count,
+        "artist_variety": artist_variety
     }
 
 

@@ -157,11 +157,6 @@ function App() {
     }
   }, [accessToken, timeRange])
 
-  const artistNames = topTracks.map(track => track.artists[0].name)
-  const uniqueArtists = new Set(artistNames)
-  const uniqueArtistCount = uniqueArtists.size
-  const artistVariety = topTracks.length > 0 ? Math.round((uniqueArtistCount / topTracks.length) * 100) : 0
-
   const genreNames = topArtists.flatMap(artist => artist.genres ?? [])
   const uniqueGenres = new Set(genreNames)
   const uniqueGenreCount = uniqueGenres.size
@@ -187,6 +182,7 @@ function App() {
   const [backendUniqueArtistCount, setBackendUniqueArtistCount] = useState(0)
   const [backendMostRepeatedArtist, setBackendMostRepeatedArtist] = useState("")
   const [backendMostRepeatedArtistCount, setBackendMostRepeatedArtistCount] = useState(0)
+  const [backendArtistVariety, setBackendArtistVariety] = useState(0)
 
   useEffect(() => {
     if (topTracks.length > 0) {
@@ -204,6 +200,7 @@ function App() {
           setBackendUniqueArtistCount(data.unique_artist_count)
           setBackendMostRepeatedArtist(data.most_repeated_artist)
           setBackendMostRepeatedArtistCount(data.most_repeated_artist_count)
+          setBackendArtistVariety(data.artist_variety)
         })
         .catch(() => setErrorMessage("Could not analyze taste."))
     }
@@ -237,7 +234,7 @@ function App() {
           unique_artist_count: backendUniqueArtistCount,
           most_repeated_artist: backendMostRepeatedArtist,
           most_repeated_artist_count: backendMostRepeatedArtistCount,
-          artist_variety: artistVariety,
+          artist_variety: backendArtistVariety,
           top_artist_overlap: overlapCount
         })
       })
@@ -261,7 +258,7 @@ function App() {
     backendUniqueArtistCount,
     backendMostRepeatedArtist,
     backendMostRepeatedArtistCount,
-    artistVariety,
+    backendArtistVariety,
     overlapCount
   ])
 
@@ -311,7 +308,7 @@ function App() {
         </div>
         <div className="stat-card">
           <span className="stat-label">Artist Variety</span>
-          <strong>{artistVariety}%</strong>
+          <strong>{backendArtistVariety}%</strong>
           <span className="stat-caption">across your top tracks</span>
         </div>
         <div className="stat-card">
