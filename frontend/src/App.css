@@ -143,6 +143,13 @@ h2 {
   margin-bottom: 8px;
 }
 
+.summary-source {
+  display: block;
+  color: #8f96a3;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
 .summary-card p {
   color: #d1d5db;
   line-height: 1.6;

@@ -1,3 +1,9 @@
+import json
+import os
+from pathlib import Path
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -26,8 +32,22 @@ class TasteSummaryRequest(BaseModel):
     top_artist_overlap: int
 
 
-@app.post("/api/taste-summary")
-def create_taste_summary(profile: TasteSummaryRequest):
+def get_env_value(key: str):
+    if os.environ.get(key):
+        return os.environ[key]
+
+    env_path = Path(__file__).parent / ".env"
+    if not env_path.exists():
+        return None
+
+    for line in env_path.read_text().splitlines():
+        if line.startswith(f"{key}="):
+            return line.split("=", 1)[1].strip()
+
+    return None
+
+
+def create_fallback_summary(profile: TasteSummaryRequest, reason: str = "unknown"):
     if profile.artist_variety >= 80:
         variety_description = "wide-ranging"
     elif profile.artist_variety >= 50:
@@ -55,4 +75,74 @@ def create_taste_summary(profile: TasteSummaryRequest):
     if top_artist_preview:
         summary += f" Right now, your artist mix is led by {top_artist_preview}."
 
-    return {"summary": summary}
+    return {"summary": summary, "source": "fallback", "fallback_reason": reason}
+
+
+def create_taste_prompt(profile: TasteSummaryRequest):
+    return f"""
+Create a concise, specific music taste summary for a Spotify analytics app called SoundPrint.
+
+Use this data:
+- Top tracks: {", ".join(profile.top_tracks)}
+- Top artists: {", ".join(profile.top_artists)}
+- Unique artists in top tracks: {profile.unique_artist_count}
+- Most repeated artist in top tracks: {profile.most_repeated_artist}
+- Most repeated artist count: {profile.most_repeated_artist_count}
+- Artist variety score: {profile.artist_variety}%
+- Artists appearing in both top tracks and top artists: {profile.top_artist_overlap}
+
+Write 3-5 sentences. Sound thoughtful and human, but do not be corny.
+Mention patterns in the user's taste. Do not say you are an AI.
+"""
+
+
+def create_gemini_summary(profile: TasteSummaryRequest, api_key: str):
+    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent"
+    payload = {
+        "contents": [
+            {
+                "parts": [
+                    {
+                        "text": create_taste_prompt(profile)
+                    }
+                ]
+            }
+        ]
+    }
+
+    request = Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Content-Type": "application/json",
+            "x-goog-api-key": api_key
+        },
+        method="POST"
+    )
+
+    with urlopen(request, timeout=8) as response:
+        data = json.loads(response.read().decode("utf-8"))
+
+    return data["candidates"][0]["content"]["parts"][0]["text"]
+
+
+@app.post("/api/taste-summary")
+def create_taste_summary(profile: TasteSummaryRequest):
+    api_key = get_env_value("GEMINI_API_KEY")
+
+    if not api_key:
+        return create_fallback_summary(profile, "missing_api_key")
+
+    try:
+        summary = create_gemini_summary(profile, api_key)
+        return {"summary": summary, "source": "gemini"}
+    except HTTPError as error:
+        error_body = error.read().decode("utf-8")
+        print(f"Gemini HTTP error: {error.code} {error_body}")
+        return create_fallback_summary(profile, f"gemini_http_{error.code}")
+    except (URLError, TimeoutError) as error:
+        print(f"Gemini network error: {error}")
+        return create_fallback_summary(profile, "gemini_network_error")
+    except (KeyError, IndexError, json.JSONDecodeError) as error:
+        print(f"Gemini response parse error: {error}")
+        return create_fallback_summary(profile, "gemini_response_parse_error")

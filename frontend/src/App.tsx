@@ -195,9 +195,17 @@ function App() {
   const overlapCount = overlappingArtists.length
 
   const [tasteSummary, setTasteSummary] = useState("")
+  const [tasteSummarySource, setTasteSummarySource] = useState("")
+  const [tasteSummaryFallbackReason, setTasteSummaryFallbackReason] = useState("")
+  const [isTasteSummaryLoading, setIsTasteSummaryLoading] = useState(false)
 
   useEffect(() => {
     if (accessToken && topTracks.length > 0 && topArtists.length > 0) {
+      setTasteSummary("")
+      setTasteSummarySource("")
+      setTasteSummaryFallbackReason("")
+      setIsTasteSummaryLoading(true)
+
       fetch("http://127.0.0.1:8000/api/taste-summary", {
         method: "POST",
         headers: {
@@ -217,11 +225,14 @@ function App() {
         .then(data => {
           if (data.summary) {
             setTasteSummary(data.summary)
+            setTasteSummarySource(data.source)
+            setTasteSummaryFallbackReason(data.fallback_reason || "")
           } else {
             setErrorMessage("Could not load taste summary.")
           }
         })
         .catch(() => setErrorMessage("Could not load taste summary."))
+        .finally(() => setIsTasteSummaryLoading(false))
     }
   }, [
     accessToken,
@@ -313,10 +324,17 @@ function App() {
         </section>
       )}
 
-      {tasteSummary && (
+      {(isTasteSummaryLoading || tasteSummary) && (
         <section className="summary-card">
-          <span className="summary-label">AI Taste Summary</span>
-          <p>{tasteSummary}</p>
+          <span className="summary-label">
+            {tasteSummarySource === "gemini" ? "AI Taste Summary" : "Taste Summary Preview"}
+          </span>
+          {tasteSummaryFallbackReason && (
+            <span className="summary-source">Using fallback: {tasteSummaryFallbackReason}</span>
+          )}
+          <p>
+            {isTasteSummaryLoading ? "Generating taste summary..." : tasteSummary}
+          </p>
         </section>
       )}
 
