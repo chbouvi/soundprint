@@ -171,6 +171,46 @@ function App() {
     }
   }, [accessToken, timeRange])
 
+  const [shortTermArtists, setShortTermArtists] = useState<Artist[]>([])
+  const [longTermArtists, setLongTermArtists] = useState<Artist[]>([])
+
+  useEffect(() => {
+    if (accessToken) {
+      fetch("https://api.spotify.com/v1/me/top/artists?limit=10&time_range=short_term", {
+        method: "GET",
+        headers: {
+          "Authorization": "Bearer " + accessToken
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.items) {
+            setShortTermArtists(data.items)
+          }
+        })
+
+      fetch("https://api.spotify.com/v1/me/top/artists?limit=10&time_range=long_term", {
+        method: "GET",
+        headers: {
+          "Authorization": "Bearer " + accessToken
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.items) {
+            setLongTermArtists(data.items)
+          }
+        })
+    }
+  }, [accessToken])
+
+  const longTermArtistIds = longTermArtists.map(artist => artist.id)
+  const longTermArtistSet = new Set(longTermArtistIds)
+  const stableArtists = shortTermArtists.filter(artist => longTermArtistSet.has(artist.id))
+  const tasteShift = shortTermArtists.length > 0
+    ? Math.round(( 1 - (stableArtists.length / shortTermArtists.length)) * 100)
+    : 0
+
   const genreNames = topArtists.flatMap(artist => artist.genres ?? [])
   const uniqueGenres = new Set(genreNames)
   const uniqueGenreCount = uniqueGenres.size
@@ -316,11 +356,16 @@ function App() {
         </div>
         {uniqueGenreCount > 0 && (
           <div className="stat-card">
-          <span className="stat-label">Unique Genres</span>
-          <strong>{uniqueGenreCount}</strong>
-          <span className="stat-caption">across your top artists</span>
-        </div>
+            <span className="stat-label">Unique Genres</span>
+            <strong>{uniqueGenreCount}</strong>
+            <span className="stat-caption">across your top artists</span>
+          </div>
         )}
+        <div className="stat-card">
+          <span className="stat-label">Recent Taste Shift</span>
+          <strong>{tasteShift}%</strong>
+          <span className="stat-caption">of recent artists are not in your all-time top artists</span>
+        </div>
       </section>
       )}
 

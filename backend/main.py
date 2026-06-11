@@ -156,7 +156,7 @@ Use this data:
 - Artist frequency in top tracks: {artist_frequency_text}
 
 Write 3-5 sentences. Sound thoughtful and human, but do not be corny.
-Mention patterns in the user's taste. Do not say you are an AI. Include one sentence about artist repetition using the artist frequency data.
+Mention patterns in the user's taste. Do not say you are an AI.
 """
 
 
