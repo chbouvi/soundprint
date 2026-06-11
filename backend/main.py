@@ -89,6 +89,7 @@ class TasteSummaryRequest(BaseModel):
     artist_variety: int
     top_artist_overlap: int
     artist_frequency: list[ArtistFrequency]
+    taste_shift: int
 
 
 def get_env_value(key: str):
@@ -154,6 +155,7 @@ Use this data:
 - Artist variety score: {profile.artist_variety}%
 - Artists appearing in both top tracks and top artists: {profile.top_artist_overlap}
 - Artist frequency in top tracks: {artist_frequency_text}
+- Recent taste shift: {profile.taste_shift}% of recent artists are not in the user's all-time top artists
 
 Write 3-5 sentences. Sound thoughtful and human, but do not be corny.
 Mention patterns in the user's taste. Do not say you are an AI.

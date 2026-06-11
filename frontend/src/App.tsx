@@ -208,7 +208,7 @@ function App() {
   const longTermArtistSet = new Set(longTermArtistIds)
   const stableArtists = shortTermArtists.filter(artist => longTermArtistSet.has(artist.id))
   const tasteShift = shortTermArtists.length > 0
-    ? Math.round(( 1 - (stableArtists.length / shortTermArtists.length)) * 100)
+    ? Math.round((1 - (stableArtists.length / shortTermArtists.length)) * 100)
     : 0
 
   const genreNames = topArtists.flatMap(artist => artist.genres ?? [])
@@ -272,7 +272,8 @@ function App() {
           most_repeated_artist_count: tasteAnalysis.most_repeated_artist_count,
           artist_variety: tasteAnalysis.artist_variety,
           top_artist_overlap: tasteAnalysis.top_artist_overlap,
-          artist_frequency: tasteAnalysis.artist_frequency
+          artist_frequency: tasteAnalysis.artist_frequency,
+          taste_shift: tasteShift
         })
       })
         .then(response => response.json())
@@ -297,7 +298,8 @@ function App() {
     tasteAnalysis?.most_repeated_artist_count,
     tasteAnalysis?.artist_variety,
     tasteAnalysis?.top_artist_overlap,
-    tasteAnalysis?.artist_frequency
+    tasteAnalysis?.artist_frequency,
+    tasteShift
   ])
 
 
