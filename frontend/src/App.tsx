@@ -10,6 +10,7 @@ type Artist = {
   id: string
   name: string
   images: ArtistImage[]
+  genres?: string[]
 }
 
 type AlbumImage = {
@@ -161,6 +162,10 @@ function App() {
   const uniqueArtistCount = uniqueArtists.size
   const artistVariety = topTracks.length > 0 ? Math.round((uniqueArtistCount / topTracks.length) * 100) : 0
 
+  const genreNames = topArtists.flatMap(artist => artist.genres ?? [])
+  const uniqueGenres = new Set(genreNames)
+  const uniqueGenreCount = uniqueGenres.size
+
   const artistCounts: Record<string, number> = {}
 
   topTracks.forEach(track => {
@@ -298,6 +303,13 @@ function App() {
           <strong>{overlapCount}</strong>
           <span className="stat-caption">top artists also in your top tracks</span>
         </div>
+        {uniqueGenreCount > 0 && (
+          <div className="stat-card">
+          <span className="stat-label">Unique Genres</span>
+          <strong>{uniqueGenreCount}</strong>
+          <span className="stat-caption">across your top artists</span>
+        </div>
+        )}
       </section>
       )}
 
