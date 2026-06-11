@@ -371,6 +371,7 @@ function App() {
       </section>
       )}
 
+      <div className="insights-grid">
       {accessToken && tasteAnalysis && (
         <section className="chart-card">
           <h3>Artist Frequency in Top Tracks</h3>
@@ -407,6 +408,7 @@ function App() {
           </p>
         </section>
       )}
+      </div>
 
       {topTracks.length === 0 && topArtists.length === 0 ? (
         <p className="connect-spotify">Connect Spotify to generate your music profile.</p>
