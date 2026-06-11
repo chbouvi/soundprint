@@ -178,23 +178,15 @@ function App() {
     }
   })
 
-  let mostRepeatedArtist = ""
-  let mostRepeatedArtistCount = 0
-
-  Object.entries(artistCounts).forEach(([artistName, count]) => {
-    if (count > mostRepeatedArtistCount) {
-      mostRepeatedArtist = artistName
-      mostRepeatedArtistCount = count
-    }
-  })
-
   const artistFrequency = Object.entries(artistCounts).sort((a, b) => b[1] - a[1])
   
   const maxArtistCount = artistFrequency.length > 0 
     ? Math.max(...artistFrequency.map(([,count]) => count)) 
     : 0
 
-    const [backendUniqueArtistCount, setBackendUniqueArtistCount] = useState(0)
+  const [backendUniqueArtistCount, setBackendUniqueArtistCount] = useState(0)
+  const [backendMostRepeatedArtist, setBackendMostRepeatedArtist] = useState("")
+  const [backendMostRepeatedArtistCount, setBackendMostRepeatedArtistCount] = useState(0)
 
   useEffect(() => {
     if (topTracks.length > 0) {
@@ -210,6 +202,8 @@ function App() {
         .then(response => response.json())
         .then(data => {
           setBackendUniqueArtistCount(data.unique_artist_count)
+          setBackendMostRepeatedArtist(data.most_repeated_artist)
+          setBackendMostRepeatedArtistCount(data.most_repeated_artist_count)
         })
         .catch(() => setErrorMessage("Could not analyze taste."))
     }
@@ -241,8 +235,8 @@ function App() {
           top_tracks: topTracks.map(track => track.name),
           top_artists: topArtists.map(artist => artist.name),
           unique_artist_count: backendUniqueArtistCount,
-          most_repeated_artist: mostRepeatedArtist,
-          most_repeated_artist_count: mostRepeatedArtistCount,
+          most_repeated_artist: backendMostRepeatedArtist,
+          most_repeated_artist_count: backendMostRepeatedArtistCount,
           artist_variety: artistVariety,
           top_artist_overlap: overlapCount
         })
@@ -265,8 +259,8 @@ function App() {
     topTracks,
     topArtists,
     backendUniqueArtistCount,
-    mostRepeatedArtist,
-    mostRepeatedArtistCount,
+    backendMostRepeatedArtist,
+    backendMostRepeatedArtistCount,
     artistVariety,
     overlapCount
   ])
@@ -312,8 +306,8 @@ function App() {
         </div>
         <div className="stat-card">
           <span className="stat-label">Most Repeated Artist</span>
-          <strong>{mostRepeatedArtist}</strong>
-          <span className="stat-caption">appears in {mostRepeatedArtistCount} top tracks</span>
+          <strong>{backendMostRepeatedArtist}</strong>
+          <span className="stat-caption">appears in {backendMostRepeatedArtistCount} top tracks</span>
         </div>
         <div className="stat-card">
           <span className="stat-label">Artist Variety</span>

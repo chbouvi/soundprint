@@ -28,8 +28,26 @@ class TasteAnalysisRequest(BaseModel):
 def analyze_taste(profile: TasteAnalysisRequest):
     unique_artists = set(profile.top_track_artists)
 
+    artist_counts = {}
+
+    for artist_name in profile.top_track_artists:
+        if artist_name in artist_counts:
+            artist_counts[artist_name] += 1
+        else:
+            artist_counts[artist_name] = 1
+    
+    most_repeated_artist = ""
+    most_repeated_artist_count = 0
+
+    for artist_name, count in artist_counts.items():
+        if count > most_repeated_artist_count:
+            most_repeated_artist = artist_name
+            most_repeated_artist_count = count
+
     return {
-        "unique_artist_count": len(unique_artists)
+        "unique_artist_count": len(unique_artists),
+        "most_repeated_artist": most_repeated_artist,
+        "most_repeated_artist_count": most_repeated_artist_count
     }
 
 
