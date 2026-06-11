@@ -91,6 +91,40 @@ h2 {
   font-size: 13px;
 }
 
+.chart-card {
+  background: #1f1f26;
+  border: 1px solid #2d2d36;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 22px auto 0;
+  max-width: 720px;
+}
+
+.bar-row {
+  margin-top: 14px;
+}
+
+.bar-header {
+  display: flex;
+  justify-content: space-between;
+  color: #d1d5db;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.bar-track {
+  height: 8px;
+  background: #2d2d36;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: chartreuse;
+  border-radius: 9999px;
+}
+
 .taste-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

@@ -182,6 +182,12 @@ function App() {
       mostRepeatedArtistCount = count
     }
   })
+
+  const artistFrequency = Object.entries(artistCounts).sort((a, b) => b[1] - a[1])
+  
+  const maxArtistCount = artistFrequency.length > 0 
+    ? Math.max(...artistFrequency.map(([,count]) => count)) 
+    : 0
   
   const trackArtistIds = topTracks.map(track => track.artists[0].id)
   const trackArtistSet = new Set(trackArtistIds)
@@ -242,6 +248,29 @@ function App() {
           <span className="stat-caption">top artists also in your top tracks</span>
         </div>
       </section>
+      )}
+
+      {accessToken && (
+        <section className="chart-card">
+          <h3>Artist Frequency in Top Tracks</h3>
+
+          {artistFrequency.map(([artistName, count]) => {
+            const barWidth = (count / maxArtistCount) * 100
+
+            return (
+              <div className="bar-row" key={artistName}>
+                <div className="bar-header">
+                  <span>{artistName}</span>
+                  <span>{count}</span>
+                </div>
+
+                <div className="bar-track">
+                  <div className="bar-fill" style={{width: `${barWidth}%` }}></div>
+                </div>
+              </div>
+            )
+          })}
+        </section>
       )}
 
       {topTracks.length === 0 && topArtists.length === 0 ? (
