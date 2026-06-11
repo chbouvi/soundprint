@@ -28,6 +28,14 @@ type Track = {
   album: Album
 }
 
+type TasteAnalysis = {
+    unique_artist_count: number
+    most_repeated_artist: string
+    most_repeated_artist_count: number
+    artist_variety: number
+    top_artist_overlap: number
+}
+
 function App() {
   const generateRandomString = (length: number) => {
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -179,14 +187,21 @@ function App() {
     ? Math.max(...artistFrequency.map(([,count]) => count)) 
     : 0
 
-  const [backendUniqueArtistCount, setBackendUniqueArtistCount] = useState(0)
-  const [backendMostRepeatedArtist, setBackendMostRepeatedArtist] = useState("")
-  const [backendMostRepeatedArtistCount, setBackendMostRepeatedArtistCount] = useState(0)
-  const [backendArtistVariety, setBackendArtistVariety] = useState(0)
-  const [backendTopArtistOverlap, setBackendTopArtistOverlap] = useState(0)
+  const [tasteAnalysis, setTasteAnalysis] = useState<TasteAnalysis | null>(null)
+  const [tasteSummary, setTasteSummary] = useState("")
+  const [tasteSummarySource, setTasteSummarySource] = useState("")
+  const [tasteSummaryFallbackReason, setTasteSummaryFallbackReason] = useState("")
+  const [isTasteSummaryLoading, setIsTasteSummaryLoading] = useState(false)
 
   useEffect(() => {
-    if (topTracks.length > 0 && topArtists.length > 0) {
+    setTasteAnalysis(null)
+    setTasteSummary("")
+    setTasteSummarySource("")
+    setTasteSummaryFallbackReason("")
+  }, [timeRange])
+
+  useEffect(() => {
+    if (accessToken && topTracks.length > 0 && topArtists.length > 0) {
       fetch("http://127.0.0.1:8000/api/analyze-taste", {
         method: "POST",
         headers: {
@@ -200,23 +215,14 @@ function App() {
       })
         .then(response => response.json())
         .then(data => {
-          setBackendUniqueArtistCount(data.unique_artist_count)
-          setBackendMostRepeatedArtist(data.most_repeated_artist)
-          setBackendMostRepeatedArtistCount(data.most_repeated_artist_count)
-          setBackendArtistVariety(data.artist_variety)
-          setBackendTopArtistOverlap(data.top_artist_overlap)
+          setTasteAnalysis(data)
         })
         .catch(() => setErrorMessage("Could not analyze taste."))
     }
-  }, [topTracks, topArtists])
-
-  const [tasteSummary, setTasteSummary] = useState("")
-  const [tasteSummarySource, setTasteSummarySource] = useState("")
-  const [tasteSummaryFallbackReason, setTasteSummaryFallbackReason] = useState("")
-  const [isTasteSummaryLoading, setIsTasteSummaryLoading] = useState(false)
+  }, [accessToken, topTracks, topArtists])
 
   useEffect(() => {
-    if (accessToken && topTracks.length > 0 && topArtists.length > 0) {
+    if (accessToken && topTracks.length > 0 && topArtists.length > 0 && tasteAnalysis) {
       setTasteSummary("")
       setTasteSummarySource("")
       setTasteSummaryFallbackReason("")
@@ -230,11 +236,11 @@ function App() {
         body: JSON.stringify({
           top_tracks: topTracks.map(track => track.name),
           top_artists: topArtists.map(artist => artist.name),
-          unique_artist_count: backendUniqueArtistCount,
-          most_repeated_artist: backendMostRepeatedArtist,
-          most_repeated_artist_count: backendMostRepeatedArtistCount,
-          artist_variety: backendArtistVariety,
-          top_artist_overlap: backendTopArtistOverlap
+          unique_artist_count: tasteAnalysis.unique_artist_count,
+          most_repeated_artist: tasteAnalysis.most_repeated_artist,
+          most_repeated_artist_count: tasteAnalysis.most_repeated_artist_count,
+          artist_variety: tasteAnalysis.artist_variety,
+          top_artist_overlap: tasteAnalysis.top_artist_overlap
         })
       })
         .then(response => response.json())
@@ -254,11 +260,11 @@ function App() {
     accessToken,
     topTracks,
     topArtists,
-    backendUniqueArtistCount,
-    backendMostRepeatedArtist,
-    backendMostRepeatedArtistCount,
-    backendArtistVariety,
-    backendTopArtistOverlap
+    tasteAnalysis?.unique_artist_count,
+    tasteAnalysis?.most_repeated_artist,
+    tasteAnalysis?.most_repeated_artist_count,
+    tasteAnalysis?.artist_variety,
+    tasteAnalysis?.top_artist_overlap
   ])
 
 
@@ -293,26 +299,26 @@ function App() {
         <p>Error: {errorMessage}</p>
       )}
       
-      {accessToken && (
+      {accessToken && tasteAnalysis && (
       <section className="stats-panel">
         <div className="stat-card">
           <span className="stat-label">Unique Artists</span>
-          <strong>{backendUniqueArtistCount}</strong>
+          <strong>{tasteAnalysis?.unique_artist_count}</strong>
           <span className="stat-caption">across your top tracks</span>
         </div>
         <div className="stat-card">
           <span className="stat-label">Most Repeated Artist</span>
-          <strong>{backendMostRepeatedArtist}</strong>
-          <span className="stat-caption">appears in {backendMostRepeatedArtistCount} top tracks</span>
+          <strong>{tasteAnalysis?.most_repeated_artist}</strong>
+          <span className="stat-caption">appears in {tasteAnalysis?.most_repeated_artist_count} top tracks</span>
         </div>
         <div className="stat-card">
           <span className="stat-label">Artist Variety</span>
-          <strong>{backendArtistVariety}%</strong>
+          <strong>{tasteAnalysis?.artist_variety}%</strong>
           <span className="stat-caption">across your top tracks</span>
         </div>
         <div className="stat-card">
           <span className="stat-label">Top Artist Overlap</span>
-          <strong>{backendTopArtistOverlap}</strong>
+          <strong>{tasteAnalysis?.top_artist_overlap}</strong>
           <span className="stat-caption">top artists also in your top tracks</span>
         </div>
         {uniqueGenreCount > 0 && (
