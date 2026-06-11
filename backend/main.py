@@ -57,13 +57,23 @@ def analyze_taste(profile: TasteAnalysisRequest):
     for artist_id in profile.top_artist_ids:
         if artist_id in track_artist_ids:
             top_artist_overlap += 1
+    
+    artist_frequency = [
+        {"artist_name": artist_name, "count": count}
+        for artist_name, count in sorted(
+            artist_counts.items(),
+            key=lambda item: item[1],
+            reverse=True
+        )
+    ]
 
     return {
         "unique_artist_count": len(unique_artists),
         "most_repeated_artist": most_repeated_artist,
         "most_repeated_artist_count": most_repeated_artist_count,
         "artist_variety": artist_variety,
-        "top_artist_overlap": top_artist_overlap
+        "top_artist_overlap": top_artist_overlap,
+        "artist_frequency": artist_frequency
     }
 
 

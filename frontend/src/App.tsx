@@ -28,12 +28,18 @@ type Track = {
   album: Album
 }
 
+type ArtistFrequency = {
+  artist_name: string
+  count: number
+}
+
 type TasteAnalysis = {
     unique_artist_count: number
     most_repeated_artist: string
     most_repeated_artist_count: number
     artist_variety: number
     top_artist_overlap: number
+    artist_frequency: ArtistFrequency[]
 }
 
 function App() {
@@ -169,29 +175,14 @@ function App() {
   const uniqueGenres = new Set(genreNames)
   const uniqueGenreCount = uniqueGenres.size
 
-  const artistCounts: Record<string, number> = {}
-
-  topTracks.forEach(track => {
-    const artistName = track.artists[0].name
-
-    if (artistCounts[artistName]) {
-      artistCounts[artistName] += 1
-    } else {
-      artistCounts[artistName] = 1
-    }
-  })
-
-  const artistFrequency = Object.entries(artistCounts).sort((a, b) => b[1] - a[1])
-  
-  const maxArtistCount = artistFrequency.length > 0 
-    ? Math.max(...artistFrequency.map(([,count]) => count)) 
-    : 0
-
   const [tasteAnalysis, setTasteAnalysis] = useState<TasteAnalysis | null>(null)
   const [tasteSummary, setTasteSummary] = useState("")
   const [tasteSummarySource, setTasteSummarySource] = useState("")
   const [tasteSummaryFallbackReason, setTasteSummaryFallbackReason] = useState("")
   const [isTasteSummaryLoading, setIsTasteSummaryLoading] = useState(false)
+  const maxArtistCount = tasteAnalysis && tasteAnalysis.artist_frequency.length > 0
+    ? Math.max(...tasteAnalysis.artist_frequency.map(artist => artist.count))
+    : 0
 
   useEffect(() => {
     setTasteAnalysis(null)
@@ -240,7 +231,8 @@ function App() {
           most_repeated_artist: tasteAnalysis.most_repeated_artist,
           most_repeated_artist_count: tasteAnalysis.most_repeated_artist_count,
           artist_variety: tasteAnalysis.artist_variety,
-          top_artist_overlap: tasteAnalysis.top_artist_overlap
+          top_artist_overlap: tasteAnalysis.top_artist_overlap,
+          artist_frequency: tasteAnalysis.artist_frequency
         })
       })
         .then(response => response.json())
@@ -264,7 +256,8 @@ function App() {
     tasteAnalysis?.most_repeated_artist,
     tasteAnalysis?.most_repeated_artist_count,
     tasteAnalysis?.artist_variety,
-    tasteAnalysis?.top_artist_overlap
+    tasteAnalysis?.top_artist_overlap,
+    tasteAnalysis?.artist_frequency
   ])
 
 
@@ -331,18 +324,18 @@ function App() {
       </section>
       )}
 
-      {accessToken && (
+      {accessToken && tasteAnalysis && (
         <section className="chart-card">
           <h3>Artist Frequency in Top Tracks</h3>
 
-          {artistFrequency.map(([artistName, count]) => {
-            const barWidth = (count / maxArtistCount) * 100
+          {tasteAnalysis.artist_frequency.map(artist => {
+            const barWidth = maxArtistCount > 0 ? (artist.count / maxArtistCount) * 100 : 0
 
             return (
-              <div className="bar-row" key={artistName}>
+              <div className="bar-row" key={artist.artist_name}>
                 <div className="bar-header">
-                  <span>{artistName}</span>
-                  <span>{count}</span>
+                  <span>{artist.artist_name}</span>
+                  <span>{artist.count}</span>
                 </div>
 
                 <div className="bar-track">
