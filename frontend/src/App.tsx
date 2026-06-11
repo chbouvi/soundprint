@@ -193,6 +193,27 @@ function App() {
   const maxArtistCount = artistFrequency.length > 0 
     ? Math.max(...artistFrequency.map(([,count]) => count)) 
     : 0
+
+    const [backendUniqueArtistCount, setBackendUniqueArtistCount] = useState(0)
+
+  useEffect(() => {
+    if (topTracks.length > 0) {
+      fetch("http://127.0.0.1:8000/api/analyze-taste", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          top_track_artists: topTracks.map(track => track.artists[0].name)
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          setBackendUniqueArtistCount(data.unique_artist_count)
+        })
+        .catch(() => setErrorMessage("Could not analyze taste."))
+    }
+  }, [topTracks])
   
   const trackArtistIds = topTracks.map(track => track.artists[0].id)
   const trackArtistSet = new Set(trackArtistIds)
@@ -219,7 +240,7 @@ function App() {
         body: JSON.stringify({
           top_tracks: topTracks.map(track => track.name),
           top_artists: topArtists.map(artist => artist.name),
-          unique_artist_count: uniqueArtistCount,
+          unique_artist_count: backendUniqueArtistCount,
           most_repeated_artist: mostRepeatedArtist,
           most_repeated_artist_count: mostRepeatedArtistCount,
           artist_variety: artistVariety,
@@ -243,12 +264,13 @@ function App() {
     accessToken,
     topTracks,
     topArtists,
-    uniqueArtistCount,
+    backendUniqueArtistCount,
     mostRepeatedArtist,
     mostRepeatedArtistCount,
     artistVariety,
     overlapCount
   ])
+
 
   return (
     <main>
@@ -285,7 +307,7 @@ function App() {
       <section className="stats-panel">
         <div className="stat-card">
           <span className="stat-label">Unique Artists</span>
-          <strong>{uniqueArtistCount}</strong>
+          <strong>{backendUniqueArtistCount}</strong>
           <span className="stat-caption">across your top tracks</span>
         </div>
         <div className="stat-card">

@@ -21,6 +21,17 @@ app.add_middleware(
 def health_check():
     return {"message": "SoundPrint backend is running"}
 
+class TasteAnalysisRequest(BaseModel):
+    top_track_artists: list[str]
+
+@app.post("/api/analyze-taste")
+def analyze_taste(profile: TasteAnalysisRequest):
+    unique_artists = set(profile.top_track_artists)
+
+    return {
+        "unique_artist_count": len(unique_artists)
+    }
+
 
 class TasteSummaryRequest(BaseModel):
     top_tracks: list[str]
