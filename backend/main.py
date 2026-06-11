@@ -23,6 +23,8 @@ def health_check():
 
 class TasteAnalysisRequest(BaseModel):
     top_track_artists: list[str]
+    top_track_artist_ids: list[str]
+    top_artist_ids: list[str]
 
 @app.post("/api/analyze-taste")
 def analyze_taste(profile: TasteAnalysisRequest):
@@ -48,12 +50,20 @@ def analyze_taste(profile: TasteAnalysisRequest):
         artist_variety = round((len(unique_artists) / len(profile.top_track_artists)) * 100)
     else:
         artist_variety = 0
+    
+    track_artist_ids = set(profile.top_track_artist_ids)
+    top_artist_overlap = 0
+
+    for artist_id in profile.top_artist_ids:
+        if artist_id in track_artist_ids:
+            top_artist_overlap += 1
 
     return {
         "unique_artist_count": len(unique_artists),
         "most_repeated_artist": most_repeated_artist,
         "most_repeated_artist_count": most_repeated_artist_count,
-        "artist_variety": artist_variety
+        "artist_variety": artist_variety,
+        "top_artist_overlap": top_artist_overlap
     }
 
 

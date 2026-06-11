@@ -183,16 +183,19 @@ function App() {
   const [backendMostRepeatedArtist, setBackendMostRepeatedArtist] = useState("")
   const [backendMostRepeatedArtistCount, setBackendMostRepeatedArtistCount] = useState(0)
   const [backendArtistVariety, setBackendArtistVariety] = useState(0)
+  const [backendTopArtistOverlap, setBackendTopArtistOverlap] = useState(0)
 
   useEffect(() => {
-    if (topTracks.length > 0) {
+    if (topTracks.length > 0 && topArtists.length > 0) {
       fetch("http://127.0.0.1:8000/api/analyze-taste", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          top_track_artists: topTracks.map(track => track.artists[0].name)
+          top_track_artists: topTracks.map(track => track.artists[0].name),
+          top_track_artist_ids: topTracks.map(track => track.artists[0].id),
+          top_artist_ids: topArtists.map(artist => artist.id)
         })
       })
         .then(response => response.json())
@@ -201,15 +204,11 @@ function App() {
           setBackendMostRepeatedArtist(data.most_repeated_artist)
           setBackendMostRepeatedArtistCount(data.most_repeated_artist_count)
           setBackendArtistVariety(data.artist_variety)
+          setBackendTopArtistOverlap(data.top_artist_overlap)
         })
         .catch(() => setErrorMessage("Could not analyze taste."))
     }
-  }, [topTracks])
-  
-  const trackArtistIds = topTracks.map(track => track.artists[0].id)
-  const trackArtistSet = new Set(trackArtistIds)
-  const overlappingArtists = topArtists.filter(artist => trackArtistSet.has(artist.id))
-  const overlapCount = overlappingArtists.length
+  }, [topTracks, topArtists])
 
   const [tasteSummary, setTasteSummary] = useState("")
   const [tasteSummarySource, setTasteSummarySource] = useState("")
@@ -235,7 +234,7 @@ function App() {
           most_repeated_artist: backendMostRepeatedArtist,
           most_repeated_artist_count: backendMostRepeatedArtistCount,
           artist_variety: backendArtistVariety,
-          top_artist_overlap: overlapCount
+          top_artist_overlap: backendTopArtistOverlap
         })
       })
         .then(response => response.json())
@@ -259,7 +258,7 @@ function App() {
     backendMostRepeatedArtist,
     backendMostRepeatedArtistCount,
     backendArtistVariety,
-    overlapCount
+    backendTopArtistOverlap
   ])
 
 
@@ -313,7 +312,7 @@ function App() {
         </div>
         <div className="stat-card">
           <span className="stat-label">Top Artist Overlap</span>
-          <strong>{overlapCount}</strong>
+          <strong>{backendTopArtistOverlap}</strong>
           <span className="stat-caption">top artists also in your top tracks</span>
         </div>
         {uniqueGenreCount > 0 && (
