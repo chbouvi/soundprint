@@ -76,6 +76,9 @@ def analyze_taste(profile: TasteAnalysisRequest):
         "artist_frequency": artist_frequency
     }
 
+class ArtistFrequency(BaseModel):
+    artist_name: str
+    count: int
 
 class TasteSummaryRequest(BaseModel):
     top_tracks: list[str]
@@ -85,6 +88,7 @@ class TasteSummaryRequest(BaseModel):
     most_repeated_artist_count: int
     artist_variety: int
     top_artist_overlap: int
+    artist_frequency: list[ArtistFrequency]
 
 
 def get_env_value(key: str):
@@ -134,6 +138,10 @@ def create_fallback_summary(profile: TasteSummaryRequest, reason: str = "unknown
 
 
 def create_taste_prompt(profile: TasteSummaryRequest):
+    artist_frequency_text = ", ".join(
+        f"{artist.artist_name}: {artist.count}"
+        for artist in profile.artist_frequency
+    )
     return f"""
 Create a concise, specific music taste summary for a Spotify analytics app called SoundPrint.
 
@@ -145,9 +153,10 @@ Use this data:
 - Most repeated artist count: {profile.most_repeated_artist_count}
 - Artist variety score: {profile.artist_variety}%
 - Artists appearing in both top tracks and top artists: {profile.top_artist_overlap}
+- Artist frequency in top tracks: {artist_frequency_text}
 
 Write 3-5 sentences. Sound thoughtful and human, but do not be corny.
-Mention patterns in the user's taste. Do not say you are an AI.
+Mention patterns in the user's taste. Do not say you are an AI. Include one sentence about artist repetition using the artist frequency data.
 """
 
 
