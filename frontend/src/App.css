@@ -125,6 +125,29 @@ h2 {
   border-radius: 9999px;
 }
 
+.summary-card {
+  background: #1f1f26;
+  border: 1px solid #2d2d36;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 22px auto 0;
+  max-width: 720px;
+  text-align: left;
+}
+
+.summary-label {
+  display: block;
+  color: #9ca3af;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.summary-card p {
+  color: #d1d5db;
+  line-height: 1.6;
+}
+
 .taste-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

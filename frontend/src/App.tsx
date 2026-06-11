@@ -194,6 +194,46 @@ function App() {
   const overlappingArtists = topArtists.filter(artist => trackArtistSet.has(artist.id))
   const overlapCount = overlappingArtists.length
 
+  const [tasteSummary, setTasteSummary] = useState("")
+
+  useEffect(() => {
+    if (accessToken && topTracks.length > 0 && topArtists.length > 0) {
+      fetch("http://127.0.0.1:8000/api/taste-summary", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          top_tracks: topTracks.map(track => track.name),
+          top_artists: topArtists.map(artist => artist.name),
+          unique_artist_count: uniqueArtistCount,
+          most_repeated_artist: mostRepeatedArtist,
+          most_repeated_artist_count: mostRepeatedArtistCount,
+          artist_variety: artistVariety,
+          top_artist_overlap: overlapCount
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.summary) {
+            setTasteSummary(data.summary)
+          } else {
+            setErrorMessage("Could not load taste summary.")
+          }
+        })
+        .catch(() => setErrorMessage("Could not load taste summary."))
+    }
+  }, [
+    accessToken,
+    topTracks,
+    topArtists,
+    uniqueArtistCount,
+    mostRepeatedArtist,
+    mostRepeatedArtistCount,
+    artistVariety,
+    overlapCount
+  ])
+
   return (
     <main>
       <h1>SoundPrint</h1>
@@ -270,6 +310,13 @@ function App() {
               </div>
             )
           })}
+        </section>
+      )}
+
+      {tasteSummary && (
+        <section className="summary-card">
+          <span className="summary-label">AI Taste Summary</span>
+          <p>{tasteSummary}</p>
         </section>
       )}
 
