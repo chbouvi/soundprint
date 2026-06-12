@@ -273,7 +273,8 @@ function App() {
           artist_variety: tasteAnalysis.artist_variety,
           top_artist_overlap: tasteAnalysis.top_artist_overlap,
           artist_frequency: tasteAnalysis.artist_frequency,
-          taste_shift: tasteShift
+          taste_shift: tasteShift,
+          time_range: timeRange
         })
       })
         .then(response => response.json())

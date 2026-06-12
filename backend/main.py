@@ -90,7 +90,13 @@ class TasteSummaryRequest(BaseModel):
     top_artist_overlap: int
     artist_frequency: list[ArtistFrequency]
     taste_shift: int
+    time_range: str
 
+time_range_labels = {
+    "short_term": "last 4 weeks",
+    "medium_term": "last 6 months",
+    "long_term": "all time",
+}
 
 def get_env_value(key: str):
     if os.environ.get(key):
@@ -143,6 +149,14 @@ def create_taste_prompt(profile: TasteSummaryRequest):
         f"{artist.artist_name}: {artist.count}"
         for artist in profile.artist_frequency
     )
+
+    if profile.time_range == "short_term":
+        taste_shift_text = f"- Recent taste shift: {profile.taste_shift}% of recent artists are not in the user's all-time top artists"
+    else:
+        taste_shift_text = "- Recent taste shift: Do not mention recent taste shift for this selected time range"
+
+    time_range_label = time_range_labels.get(profile.time_range, profile.time_range)
+
     return f"""
 Create a concise, specific music taste summary for a Spotify analytics app called SoundPrint.
 
@@ -155,9 +169,10 @@ Use this data:
 - Artist variety score: {profile.artist_variety}%
 - Artists appearing in both top tracks and top artists: {profile.top_artist_overlap}
 - Artist frequency in top tracks: {artist_frequency_text}
-- Recent taste shift: {profile.taste_shift}% of recent artists are not in the user's all-time top artists
+{taste_shift_text}
+- Selected time range: {time_range_label}
 
-Write 3-5 sentences. Sound thoughtful and human, but do not be corny.
+Write 3-5 sentences. Focus the summary on the selected time range. Only mention all-time listening when explaining recent taste shift. Sound thoughtful and human, but do not be corny.
 Mention patterns in the user's taste. Do not say you are an AI.
 """
 
