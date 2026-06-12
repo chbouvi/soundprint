@@ -26,6 +26,33 @@ SoundPrint helps Spotify users understand how their music taste changes over tim
 The frontend handles Spotify authentication, data fetching, and dashboard rendering.
 The backend computes taste analytics and generates AI summaries from the analyzed listening profile.
 
+## Running Locally
+
+Run the backend and frontend in separate terminals.
+
+### Backend
+
+```bash
+cd backend
+python3 -m uvicorn main:app --reload
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## Environment Variables
+
+Create a `backend/.env` file:
+
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
 ## Current Analytics
 
 - Unique artists across top tracks
