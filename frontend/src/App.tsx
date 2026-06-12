@@ -224,6 +224,10 @@ function App() {
     ? Math.max(...tasteAnalysis.artist_frequency.map(artist => artist.count))
     : 0
 
+  const topTrackArtistIds = topTracks.map(track => track.artists[0].id)
+  const topTrackArtistSet = new Set(topTrackArtistIds)
+  const overlappingArtists = topArtists.filter(artist => topTrackArtistSet.has(artist.id))
+
   useEffect(() => {
     setTasteAnalysis(null)
     setTasteSummary("")
@@ -302,6 +306,20 @@ function App() {
     tasteAnalysis?.artist_frequency,
     tasteShift
   ])
+
+  const recommendationSeeds = []
+
+  overlappingArtists.forEach(artist => {
+    recommendationSeeds.push(artist.name)
+  })
+
+  recommendationSeeds.push(tasteAnalysis?.most_repeated_artist)
+
+  topArtists.forEach(artist => {
+    recommendationSeeds.push(artist.name)
+  })
+
+  const uniqueRecommendationSeeds = [...new Set(recommendationSeeds)].slice(0, 5)
 
 
   return (
@@ -410,6 +428,24 @@ function App() {
         </section>
       )}
       </div>
+
+      {accessToken && tasteAnalysis && (
+      <section className="seed-card">
+          <h3>Recommendation Seeds</h3>
+
+          <div className="seed-list">
+            {uniqueRecommendationSeeds.map(seed => (
+              <span className="seed-pill" key={seed}>
+                {seed} 
+              </span>
+            ))}
+          </div>
+
+          <p className="seed-caption">
+            These artists are the strongest signals in your recommendation profile.
+          </p>
+      </section>
+      )}
 
       {topTracks.length === 0 && topArtists.length === 0 ? (
         <p className="connect-spotify">Connect Spotify to generate your music profile.</p>

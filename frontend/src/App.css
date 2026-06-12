@@ -193,6 +193,43 @@ h2 {
   }
 }
 
+.seed-card {
+  background: #1f1f26;
+  border: 1px solid #2d2d36;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  width: min(100%, 720px);
+  margin: 24px auto 0;
+}
+
+.seed-card h3 {
+  margin-top: 0;
+}
+
+.seed-list {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.seed-pill {
+  background: rgba(127, 255, 0, 0.12);
+  border: 1px solid rgba(127, 255, 0, 0.32);
+  color: #d1d5db;
+  border-radius: 9999px;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.seed-caption {
+  color: #9ca3af;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
 .taste-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
