@@ -334,9 +334,12 @@ function App() {
   ])
 
   const [recommendedArtists, setRecommendedArtists] = useState<RecommendedArtist[]>([])
+  const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false)
 
   useEffect(() => {
     if (accessToken && topTracks.length > 0 && topArtists.length > 0 && tasteAnalysis && uniqueRecommendationSeeds.length > 0) {
+      setIsLoadingRecommendations(true)
+
       fetch("http://127.0.0.1:8000/api/recommend-artists", {
         method: "POST",
         headers: {
@@ -356,6 +359,7 @@ function App() {
           setRecommendedArtists(data.recommendations)
         })
         .catch(() => setErrorMessage("Could not load recommended artists."))
+        .finally(() => setIsLoadingRecommendations(false))
     }
   }, [accessToken, tasteAnalysis, topArtists, topTracks, uniqueRecommendationSeeds, tasteShift, timeRange])
 
@@ -484,18 +488,24 @@ function App() {
       </section>
       )}
 
-      {recommendedArtists.length > 0 && (
+      {(isLoadingRecommendations || recommendedArtists.length > 0) && (
         <section className="recommended-card">
           <h3>Recommended Artists</h3>
 
-          <div className="recommended-list">
-            {recommendedArtists.map(recommendedArtist => (
-              <div className="recommended-artist" key={recommendedArtist.name}>
-                <span className="recommended-name">{recommendedArtist.name}</span>
-                <p>{recommendedArtist.reason}</p>
-              </div>
-            ))}
-          </div>
+          {isLoadingRecommendations && (
+            <p>Finding artists you might like...</p>
+          )}
+
+          {!isLoadingRecommendations && (
+            <div className="recommended-list">
+              {recommendedArtists.map(recommendedArtist => (
+                <div className="recommended-artist" key={recommendedArtist.name}>
+                  <span className="recommended-name">{recommendedArtist.name}</span>
+                  <p>{recommendedArtist.reason}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       )}
 
