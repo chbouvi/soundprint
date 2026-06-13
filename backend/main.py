@@ -227,3 +227,102 @@ def create_taste_summary(profile: TasteSummaryRequest):
     except (KeyError, IndexError, json.JSONDecodeError) as error:
         print(f"Gemini response parse error: {error}")
         return create_fallback_summary(profile, "gemini_response_parse_error")
+    
+
+def call_gemini(prompt: str, api_key: str):
+    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent"
+    payload = {
+        "contents": [
+            {
+                "parts": [
+                    {
+                        "text": prompt
+                    }
+                ]
+            }
+        ]
+    }
+
+    request = Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Content-Type": "application/json",
+            "x-goog-api-key": api_key
+        },
+        method="POST"
+    )
+
+    with urlopen(request, timeout=8) as response:
+        data = json.loads(response.read().decode("utf-8"))
+
+    return data["candidates"][0]["content"]["parts"][0]["text"]
+
+class RecommendArtistsRequest(BaseModel):
+    top_artists: list[str]
+    top_tracks: list[str]
+    recommendation_seeds: list[str]
+    artist_frequency: list[ArtistFrequency]
+    taste_shift: int
+    time_range: str
+    
+@app.post("/api/recommend-artists")
+def recommend_artists(profile: RecommendArtistsRequest):
+    recommendations = create_recommended_artists(profile)
+    return {
+        "recommendations": recommendations
+    }
+
+def create_recommend_artist_prompt(profile: RecommendArtistsRequest):
+    artist_frequency_text = ", ".join(
+        f"{artist.artist_name}: {artist.count}"
+        for artist in profile.artist_frequency
+    )
+
+    time_range_label = time_range_labels.get(profile.time_range, profile.time_range)
+
+    return f"""
+Recommend 4 artists for a Spotify analytics app called SoundPrint.
+
+Use this listening profile:
+- Selected time range: {time_range_label}
+- Top artists: {", ".join(profile.top_artists)}
+- Top tracks: {", ".join(profile.top_tracks)}
+- Recommendation seeds: {", ".join(profile.recommendation_seeds)}
+- Artist frequency in top tracks: {artist_frequency_text}
+- Recent taste shift: {profile.taste_shift}%
+
+Return only JSON in this exact format:
+[
+  {{
+    "name": "Artist Name",
+    "reason": "One short sentence explaining why this artist fits."
+  }}
+]
+
+Rules:
+- Do not recommend artists already listed in top artists.
+- Do not recommend artists already listed as recommendation seeds.
+- Prefer real, well-known artists that are likely available on Spotify.
+- Keep each reason specific to the user's listening taste.
+"""
+
+def create_recommended_artists(profile: RecommendArtistsRequest):
+    api_key = get_env_value("GEMINI_API_KEY")
+
+    if not api_key:
+        return []
+
+    prompt = create_recommend_artist_prompt(profile)
+
+    try:
+        response_text = call_gemini(prompt, api_key)
+        cleaned_response = response_text.strip()
+
+        if cleaned_response.startswith("```json"):
+            cleaned_response = cleaned_response.removeprefix("```json").removesuffix("```").strip()
+        elif cleaned_response.startswith("```"):
+            cleaned_response = cleaned_response.removeprefix("```").removesuffix("```").strip()
+        return json.loads(response_text)
+    except Exception:
+        return []

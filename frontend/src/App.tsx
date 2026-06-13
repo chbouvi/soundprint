@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import './App.css'
 
 
@@ -34,12 +34,17 @@ type ArtistFrequency = {
 }
 
 type TasteAnalysis = {
-    unique_artist_count: number
-    most_repeated_artist: string
-    most_repeated_artist_count: number
-    artist_variety: number
-    top_artist_overlap: number
-    artist_frequency: ArtistFrequency[]
+  unique_artist_count: number
+  most_repeated_artist: string
+  most_repeated_artist_count: number
+  artist_variety: number
+  top_artist_overlap: number
+  artist_frequency: ArtistFrequency[]
+}
+
+type RecommendedArtist = {
+  name: string
+  reason: string
 }
 
 function App() {
@@ -223,10 +228,31 @@ function App() {
   const maxArtistCount = tasteAnalysis && tasteAnalysis.artist_frequency.length > 0
     ? Math.max(...tasteAnalysis.artist_frequency.map(artist => artist.count))
     : 0
+  
+  const overlappingArtists = useMemo(() => {
+    const topTrackArtistIds = topTracks.map(track => track.artists[0].id)
+    const topTrackArtistSet = new Set(topTrackArtistIds)
 
-  const topTrackArtistIds = topTracks.map(track => track.artists[0].id)
-  const topTrackArtistSet = new Set(topTrackArtistIds)
-  const overlappingArtists = topArtists.filter(artist => topTrackArtistSet.has(artist.id))
+    return topArtists.filter(artist => topTrackArtistSet.has(artist.id))
+  }, [topTracks, topArtists])
+
+  const uniqueRecommendationSeeds = useMemo(() => {
+    const recommendationSeeds: string[] = []
+
+    overlappingArtists.forEach(artist => {
+      recommendationSeeds.push(artist.name)
+    })
+
+    if (tasteAnalysis?.most_repeated_artist) {
+      recommendationSeeds.push(tasteAnalysis.most_repeated_artist)
+    }
+
+    topArtists.forEach(artist => {
+      recommendationSeeds.push(artist.name)
+    })
+
+    return [...new Set(recommendationSeeds)].slice(0, 5)
+  }, [overlappingArtists, tasteAnalysis?.most_repeated_artist, topArtists])
 
   useEffect(() => {
     setTasteAnalysis(null)
@@ -307,20 +333,31 @@ function App() {
     tasteShift
   ])
 
-  const recommendationSeeds = []
+  const [recommendedArtists, setRecommendedArtists] = useState<RecommendedArtist[]>([])
 
-  overlappingArtists.forEach(artist => {
-    recommendationSeeds.push(artist.name)
-  })
-
-  recommendationSeeds.push(tasteAnalysis?.most_repeated_artist)
-
-  topArtists.forEach(artist => {
-    recommendationSeeds.push(artist.name)
-  })
-
-  const uniqueRecommendationSeeds = [...new Set(recommendationSeeds)].slice(0, 5)
-
+  useEffect(() => {
+    if (accessToken && topTracks.length > 0 && topArtists.length > 0 && tasteAnalysis && uniqueRecommendationSeeds.length > 0) {
+      fetch("http://127.0.0.1:8000/api/recommend-artists", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          top_artists: topArtists.map(artist => artist.name),
+          top_tracks: topTracks.map(track => track.name),
+          recommendation_seeds: uniqueRecommendationSeeds,
+          artist_frequency: tasteAnalysis.artist_frequency,
+          taste_shift: tasteShift,
+          time_range: timeRange
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          setRecommendedArtists(data.recommendations)
+        })
+        .catch(() => setErrorMessage("Could not load recommended artists."))
+    }
+  }, [accessToken, tasteAnalysis, topArtists, topTracks, uniqueRecommendationSeeds, tasteShift, timeRange])
 
   return (
     <main>
@@ -445,6 +482,21 @@ function App() {
             These artists are the strongest signals in your recommendation profile.
           </p>
       </section>
+      )}
+
+      {recommendedArtists.length > 0 && (
+        <section className="recommended-card">
+          <h3>Recommended Artists</h3>
+
+          <div className="recommended-list">
+            {recommendedArtists.map(recommendedArtist => (
+              <div className="recommended-artist" key={recommendedArtist.name}>
+                <span className="recommended-name">{recommendedArtist.name}</span>
+                <p>{recommendedArtist.reason}</p>
+              </div>
+            ))}
+          </div>
+        </section>
       )}
 
       {topTracks.length === 0 && topArtists.length === 0 ? (
