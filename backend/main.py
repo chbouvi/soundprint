@@ -323,6 +323,6 @@ def create_recommended_artists(profile: RecommendArtistsRequest):
             cleaned_response = cleaned_response.removeprefix("```json").removesuffix("```").strip()
         elif cleaned_response.startswith("```"):
             cleaned_response = cleaned_response.removeprefix("```").removesuffix("```").strip()
-        return json.loads(response_text)
+        return json.loads(cleaned_response)
     except Exception:
         return []
