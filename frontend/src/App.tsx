@@ -335,9 +335,11 @@ function App() {
 
   const [recommendedArtists, setRecommendedArtists] = useState<RecommendedArtist[]>([])
   const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false)
+  const [recommendationError, setRecommendationError] = useState("")
 
   useEffect(() => {
     if (accessToken && topTracks.length > 0 && topArtists.length > 0 && tasteAnalysis && uniqueRecommendationSeeds.length > 0) {
+      setRecommendationError("")
       setIsLoadingRecommendations(true)
 
       fetch("http://127.0.0.1:8000/api/recommend-artists", {
@@ -356,9 +358,13 @@ function App() {
       })
         .then(response => response.json())
         .then(data => {
-          setRecommendedArtists(data.recommendations)
+          if (data.recommendations) {
+            setRecommendedArtists(data.recommendations)
+          } else {
+            setRecommendationError("Could not load recommendation artists.")
+          }
         })
-        .catch(() => setErrorMessage("Could not load recommended artists."))
+        .catch(() => setRecommendationError("Could not load recommended artists."))
         .finally(() => setIsLoadingRecommendations(false))
     }
   }, [accessToken, tasteAnalysis, topArtists, topTracks, uniqueRecommendationSeeds, tasteShift, timeRange])
@@ -496,7 +502,11 @@ function App() {
             <p>Finding artists you might like...</p>
           )}
 
-          {!isLoadingRecommendations && (
+          {!isLoadingRecommendations && recommendationError && (
+            <p>{recommendationError}</p>
+          )}
+
+          {!isLoadingRecommendations && recommendedArtists.length > 0 && (
             <div className="recommended-list">
               {recommendedArtists.map(recommendedArtist => (
                 <div className="recommended-artist" key={recommendedArtist.name}>
