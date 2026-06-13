@@ -132,81 +132,98 @@ function App() {
     }
   }, [code, codeVerifier])
 
+  const [isLoadingTracks, setIsLoadingTracks] = useState(false)
+  const [isLoadingArtists, setIsLoadingArtists] = useState(false)
+  const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false)
+
   const [topTracks, setTopTracks] = useState<Track[]>([])
 
   useEffect(() => {
-    if (accessToken) {
-      fetch(`https://api.spotify.com/v1/me/top/tracks?limit=10&time_range=${timeRange}`, {
-        method: "GET",
-        headers: {
-          "Authorization": "Bearer " + accessToken
+    if (!accessToken) return 
+
+    setIsLoadingTracks(true)
+    setErrorMessage("")
+
+    fetch(`https://api.spotify.com/v1/me/top/tracks?limit=10&time_range=${timeRange}`, {
+      method: "GET",
+      headers: {
+        "Authorization": "Bearer " + accessToken
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.items) {
+          setTopTracks(data.items)
+        } else {
+          setErrorMessage("Could not load top tracks.")
         }
       })
-        .then(response => response.json())
-        .then(data => {
-          if (data.items) {
-            setTopTracks(data.items)
-          } else {
-            setErrorMessage("Could not load top tracks.")
-          }
-        })
-        .catch(() => setErrorMessage("Could not load top tracks."))
-    }
+      .catch(() => setErrorMessage("Could not load top tracks."))
+      .finally(() => setIsLoadingTracks(false))
   }, [accessToken, timeRange])
 
   const [topArtists, setTopArtists] = useState<Artist[]>([])
 
   useEffect(() => {
-    if (accessToken) {
-      fetch(`https://api.spotify.com/v1/me/top/artists?limit=10&time_range=${timeRange}`, {
-        method: "GET",
-        headers: {
-          "Authorization": "Bearer " + accessToken
+    if (!accessToken) return
+
+    setIsLoadingArtists(true)
+    setErrorMessage("")
+
+    fetch(`https://api.spotify.com/v1/me/top/artists?limit=10&time_range=${timeRange}`, {
+      method: "GET",
+      headers: {
+        "Authorization": "Bearer " + accessToken
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.items) {
+          setTopArtists(data.items)
+        } else {
+          setErrorMessage("Could not load top artists.")
         }
       })
-        .then(response => response.json())
-        .then(data => {
-          if (data.items) {
-            setTopArtists(data.items)
-          } else {
-            setErrorMessage("Could not load top artists.")
-          }
-        })
-        .catch(() => setErrorMessage("Could not load top artists."))
-    }
+      .catch(() => setErrorMessage("Could not load top artists."))
+      .finally(() => setIsLoadingArtists(false))
   }, [accessToken, timeRange])
 
   const [shortTermArtists, setShortTermArtists] = useState<Artist[]>([])
   const [longTermArtists, setLongTermArtists] = useState<Artist[]>([])
+  const [isLoadingTasteShift, setIsLoadingTasteShift] = useState(false)
 
   useEffect(() => {
-    if (accessToken) {
-      fetch("https://api.spotify.com/v1/me/top/artists?limit=10&time_range=short_term", {
-        method: "GET",
-        headers: {
-          "Authorization": "Bearer " + accessToken
-        }
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.items) {
-            setShortTermArtists(data.items)
-          }
-        })
+    if (!accessToken) return
 
-      fetch("https://api.spotify.com/v1/me/top/artists?limit=10&time_range=long_term", {
-        method: "GET",
-        headers: {
-          "Authorization": "Bearer " + accessToken
+    setIsLoadingTasteShift(true)
+
+    const shortTermRequest = fetch("https://api.spotify.com/v1/me/top/artists?limit=10&time_range=short_term", {
+      method: "GET",
+      headers: {
+        "Authorization": "Bearer " + accessToken
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.items) {
+          setShortTermArtists(data.items)
         }
       })
-        .then(response => response.json())
-        .then(data => {
-          if (data.items) {
-            setLongTermArtists(data.items)
-          }
-        })
-    }
+
+    const longTermRequest = fetch("https://api.spotify.com/v1/me/top/artists?limit=10&time_range=long_term", {
+      method: "GET",
+      headers: {
+        "Authorization": "Bearer " + accessToken
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.items) {
+          setLongTermArtists(data.items)
+        }
+      })
+    Promise.all([shortTermRequest, longTermRequest])
+      .finally(() => setIsLoadingTasteShift(false))
   }, [accessToken])
 
   const longTermArtistIds = longTermArtists.map(artist => artist.id)
@@ -254,32 +271,44 @@ function App() {
     return [...new Set(recommendationSeeds)].slice(0, 5)
   }, [overlappingArtists, tasteAnalysis?.most_repeated_artist, topArtists])
 
+  const [recommendedArtists, setRecommendedArtists] = useState<RecommendedArtist[]>([])
+  const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false)
+  const [recommendationError, setRecommendationError] = useState("")
+
   useEffect(() => {
     setTasteAnalysis(null)
     setTasteSummary("")
     setTasteSummarySource("")
     setTasteSummaryFallbackReason("")
+    setRecommendedArtists([])
+    setRecommendationError("")
+    setTopTracks([])
+    setTopArtists([])
   }, [timeRange])
 
   useEffect(() => {
-    if (accessToken && topTracks.length > 0 && topArtists.length > 0) {
-      fetch("http://127.0.0.1:8000/api/analyze-taste", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          top_track_artists: topTracks.map(track => track.artists[0].name),
-          top_track_artist_ids: topTracks.map(track => track.artists[0].id),
-          top_artist_ids: topArtists.map(artist => artist.id)
-        })
+    if (!accessToken || topTracks.length <= 0 || topArtists.length <= 0) return
+
+    setIsLoadingAnalysis(true)
+    setErrorMessage("")
+
+    fetch("http://127.0.0.1:8000/api/analyze-taste", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        top_track_artists: topTracks.map(track => track.artists[0].name),
+        top_track_artist_ids: topTracks.map(track => track.artists[0].id),
+        top_artist_ids: topArtists.map(artist => artist.id)
       })
-        .then(response => response.json())
-        .then(data => {
-          setTasteAnalysis(data)
-        })
-        .catch(() => setErrorMessage("Could not analyze taste."))
-    }
+    })
+      .then(response => response.json())
+      .then(data => {
+        setTasteAnalysis(data)
+      })
+      .catch(() => setErrorMessage("Could not analyze taste."))
+      .finally(() => setIsLoadingAnalysis(false))
   }, [accessToken, topTracks, topArtists])
 
   useEffect(() => {
@@ -332,10 +361,6 @@ function App() {
     tasteAnalysis?.artist_frequency,
     tasteShift
   ])
-
-  const [recommendedArtists, setRecommendedArtists] = useState<RecommendedArtist[]>([])
-  const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false)
-  const [recommendationError, setRecommendationError] = useState("")
 
   useEffect(() => {
     if (accessToken && topTracks.length > 0 && topArtists.length > 0 && tasteAnalysis && uniqueRecommendationSeeds.length > 0) {
@@ -399,6 +424,10 @@ function App() {
       {errorMessage && (
         <p>Error: {errorMessage}</p>
       )}
+
+      {accessToken && (isLoadingTracks || isLoadingArtists || isLoadingAnalysis) && (
+        <p>Loading your SoundPrint profile...</p>
+      )}
       
       {accessToken && tasteAnalysis && (
       <section className="stats-panel">
@@ -431,7 +460,7 @@ function App() {
         )}
         <div className="stat-card">
           <span className="stat-label">Recent Taste Shift</span>
-          <strong>{tasteShift}%</strong>
+          <strong>{isLoadingTasteShift ? "..." : `${tasteShift}%`}</strong>
           <span className="stat-caption">of recent artists are not in your all-time top artists</span>
         </div>
       </section>
@@ -519,9 +548,11 @@ function App() {
         </section>
       )}
 
-      {topTracks.length === 0 && topArtists.length === 0 ? (
+      {!accessToken && (
         <p className="connect-spotify">Connect Spotify to generate your music profile.</p>
-      ) : (
+      )}
+
+      {accessToken && topTracks.length > 0 && topArtists.length > 0 && (
         <div className="taste-grid">
           <section>
             <h3>Top Tracks</h3>
