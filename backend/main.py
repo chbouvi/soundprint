@@ -265,6 +265,12 @@ class RecommendArtistsRequest(BaseModel):
     artist_frequency: list[ArtistFrequency]
     taste_shift: int
     time_range: str
+    top_genres: list[str]
+    artist_variety: int
+    top_artist_overlap: int
+    most_repeated_artist: str
+    most_repeated_artist_count: int
+    unique_genre_count: int
     
 @app.post("/api/recommend-artists")
 def recommend_artists(profile: RecommendArtistsRequest):
@@ -291,6 +297,12 @@ Use this listening profile:
 - Recommendation seeds: {", ".join(profile.recommendation_seeds)}
 - Artist frequency in top tracks: {artist_frequency_text}
 - Recent taste shift: {profile.taste_shift}%
+- Genres from top artists: {", ".join(profile.top_genres)}
+- Artist variety score in top tracks: {profile.artist_variety}%
+- Top artist overlap between top tracks and top artists: {profile.top_artist_overlap}
+- Most repeated artist in top tracks: {profile.most_repeated_artist}
+- Most repeated artist count: {profile.most_repeated_artist_count}
+- Unique genre count: {profile.unique_genre_count}
 
 Return only JSON in this exact format:
 [

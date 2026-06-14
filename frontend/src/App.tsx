@@ -233,9 +233,11 @@ function App() {
     ? Math.round((1 - (stableArtists.length / shortTermArtists.length)) * 100)
     : 0
 
-  const genreNames = topArtists.flatMap(artist => artist.genres ?? [])
-  const uniqueGenres = new Set(genreNames)
-  const uniqueGenreCount = uniqueGenres.size
+  const topGenres = useMemo(() => {
+    return [...new Set(topArtists.flatMap(artist => artist.genres ?? []))]
+  }, [topArtists])
+
+  const uniqueGenreCount = topGenres.length
 
   const [tasteAnalysis, setTasteAnalysis] = useState<TasteAnalysis | null>(null)
   const [tasteSummary, setTasteSummary] = useState("")
@@ -378,7 +380,13 @@ function App() {
           recommendation_seeds: uniqueRecommendationSeeds,
           artist_frequency: tasteAnalysis.artist_frequency,
           taste_shift: tasteShift,
-          time_range: timeRange
+          time_range: timeRange,
+          top_genres: topGenres,
+          artist_variety: tasteAnalysis.artist_variety,
+          top_artist_overlap: tasteAnalysis.top_artist_overlap,
+          most_repeated_artist: tasteAnalysis.most_repeated_artist,
+          most_repeated_artist_count: tasteAnalysis.most_repeated_artist_count,
+          unique_genre_count: uniqueGenreCount,
         })
       })
         .then(response => response.json())
@@ -392,7 +400,7 @@ function App() {
         .catch(() => setRecommendationError("Could not load recommended artists."))
         .finally(() => setIsLoadingRecommendations(false))
     }
-  }, [accessToken, tasteAnalysis, topArtists, topTracks, uniqueRecommendationSeeds, tasteShift, timeRange])
+  }, [accessToken, tasteAnalysis, topArtists, topTracks, uniqueRecommendationSeeds, tasteShift, timeRange, topGenres, uniqueGenreCount])
 
   return (
     <main>
