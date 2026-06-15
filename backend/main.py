@@ -319,6 +319,41 @@ Rules:
 - Keep each reason specific to the user's listening taste.
 """
 
+def validate_recommendations(profile: RecommendArtistsRequest, recommendations):
+    blocked_artist_names = {
+        artist_name.strip().lower()
+        for artist_name in profile.top_artists + profile.recommendation_seeds
+    }
+    
+    seen_artist_names = set()
+    valid_recommendations = []
+
+    for recommendation in recommendations:
+        name = recommendation.get("name")
+        reason = recommendation.get("reason")
+
+        if not name or not reason:
+            continue
+
+        normalized_name = name.strip().lower()
+
+        if normalized_name in blocked_artist_names:
+            continue
+
+        if normalized_name in seen_artist_names:
+            continue
+        
+        valid_recommendations.append({
+            "name": name,
+            "reason": reason
+        })
+
+        seen_artist_names.add(normalized_name)
+    
+    return valid_recommendations[:4]
+        
+
+
 def create_recommended_artists(profile: RecommendArtistsRequest):
     api_key = get_env_value("GEMINI_API_KEY")
 
@@ -335,6 +370,11 @@ def create_recommended_artists(profile: RecommendArtistsRequest):
             cleaned_response = cleaned_response.removeprefix("```json").removesuffix("```").strip()
         elif cleaned_response.startswith("```"):
             cleaned_response = cleaned_response.removeprefix("```").removesuffix("```").strip()
-        return json.loads(cleaned_response)
+        recommendations = json.loads(cleaned_response)
+
+        if not isinstance(recommendations, list):
+            return []
+        
+        return validate_recommendations(profile, recommendations)
     except Exception:
         return []
