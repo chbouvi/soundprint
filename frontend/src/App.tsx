@@ -402,6 +402,11 @@ function App() {
     }
   }, [accessToken, tasteAnalysis, topArtists, topTracks, uniqueRecommendationSeeds, tasteShift, timeRange, topGenres, uniqueGenreCount])
 
+
+  const getSpotifySearchUrl = (artistName: string) => {
+    return `https://open.spotify.com/search/${encodeURIComponent(artistName)}`
+  }
+
   return (
     <main>
       <h1>SoundPrint</h1>
@@ -549,6 +554,14 @@ function App() {
                 <div className="recommended-artist" key={recommendedArtist.name}>
                   <span className="recommended-name">{recommendedArtist.name}</span>
                   <p>{recommendedArtist.reason}</p>
+                  <a
+                    className="recommended-link"
+                    href={getSpotifySearchUrl(recommendedArtist.name)}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Open in Spotify
+                  </a>
                 </div>
               ))}
             </div>
