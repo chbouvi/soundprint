@@ -268,6 +268,25 @@ h2 {
   font-size: 16px;
 }
 
+.recommended-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.recommended-score {
+  flex-shrink: 0;
+  border: 1px solid rgba(127, 255, 0, 0.22);
+  border-radius: 9999px;
+  padding: 4px 9px;
+  color: #d9ffb3;
+  background: rgba(127, 255, 0, 0.06);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
 .recommended-signals {
   display: flex;
   flex-wrap: wrap;

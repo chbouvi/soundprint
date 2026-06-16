@@ -46,6 +46,7 @@ type RecommendedArtist = {
   name: string
   reason: string
   signals: string[]
+  score: number
 }
 
 function App() {
@@ -553,7 +554,10 @@ function App() {
             <div className="recommended-list">
               {recommendedArtists.map(recommendedArtist => (
                 <div className="recommended-artist" key={recommendedArtist.name}>
-                  <span className="recommended-name">{recommendedArtist.name}</span>
+                  <div className="recommended-header">
+                    <span className="recommended-name">{recommendedArtist.name}</span>
+                    <span className="recommended-score">{recommendedArtist.score}% fit</span>
+                  </div>
                   <p>{recommendedArtist.reason}</p>
                   {recommendedArtist.signals.length > 0 && (
                     <div className="recommended-signals">

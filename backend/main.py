@@ -368,17 +368,37 @@ def validate_recommendations(profile: RecommendArtistsRequest, recommendations):
 
         clean_signals = clean_signals[:3]
 
+        score = calculate_recommendation_score(profile, clean_signals)
+
         valid_recommendations.append({
             "name": name,
             "reason": reason,
             "signals": clean_signals,
+            "score": score
         })
 
         seen_artist_names.add(normalized_name)
     
     return valid_recommendations[:4]
-        
 
+def calculate_recommendation_score(profile: RecommendArtistsRequest, signals: list[str]):
+    score = 60
+    
+    score += len(signals) * 8
+    
+    if profile.artist_variety >= 75:
+        score += 6
+    
+    if profile.top_artist_overlap >= 3:
+        score += 5
+
+    if profile.taste_shift >= 50:
+        score += 4
+    
+    if score > 95:
+        score = 95
+    
+    return score
 
 def create_recommended_artists(profile: RecommendArtistsRequest):
     api_key = get_env_value("GEMINI_API_KEY")
