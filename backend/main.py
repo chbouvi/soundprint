@@ -308,7 +308,8 @@ Return only JSON in this exact format:
 [
   {{
     "name": "Artist Name",
-    "reason": "One short sentence explaining why this artist fits."
+    "reason": "One short sentence explaining why this artist fits.",
+    "signals": ["short signal label", "short signal label"]
   }}
 ]
 
@@ -317,6 +318,11 @@ Rules:
 - Do not recommend artists already listed as recommendation seeds.
 - Prefer real, well-known artists that are likely available on Spotify.
 - Keep each reason specific to the user's listening taste.
+- Each recommendation must include "signals" as a list of 2-3 short strings.
+- Each signal should describe a real listening-profile feature that supports the recommendation.
+- Signals should be specific to the user's data, not generic filler.
+- Good signal styles include genre-based labels, seed-artist labels, artist-frequency labels, taste-shift labels, variety labels, or overlap labels.
+- Keep each signal 1-4 words.
 """
 
 def validate_recommendations(profile: RecommendArtistsRequest, recommendations):
@@ -331,9 +337,13 @@ def validate_recommendations(profile: RecommendArtistsRequest, recommendations):
     for recommendation in recommendations:
         name = recommendation.get("name")
         reason = recommendation.get("reason")
+        signals = recommendation.get("signals")
 
         if not name or not reason:
             continue
+
+        if not isinstance(signals, list):
+            signals = []
 
         normalized_name = name.strip().lower()
 
@@ -345,7 +355,8 @@ def validate_recommendations(profile: RecommendArtistsRequest, recommendations):
         
         valid_recommendations.append({
             "name": name,
-            "reason": reason
+            "reason": reason,
+            "signals": signals,
         })
 
         seen_artist_names.add(normalized_name)

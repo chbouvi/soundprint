@@ -45,6 +45,7 @@ type TasteAnalysis = {
 type RecommendedArtist = {
   name: string
   reason: string
+  signals: string[]
 }
 
 function App() {
@@ -554,6 +555,15 @@ function App() {
                 <div className="recommended-artist" key={recommendedArtist.name}>
                   <span className="recommended-name">{recommendedArtist.name}</span>
                   <p>{recommendedArtist.reason}</p>
+                  {recommendedArtist.signals.length > 0 && (
+                    <div className="recommended-signals">
+                      {recommendedArtist.signals.map(signal => (
+                        <span className="recommended-signal" key={signal}>
+                          {signal}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                   <a
                     className="recommended-link"
                     href={getSpotifySearchUrl(recommendedArtist.name)}
