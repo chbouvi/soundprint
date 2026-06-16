@@ -1,6 +1,6 @@
 # SoundPrint
 
-SoundPrint helps Spotify users understand how their music taste changes over time by combining listening analytics, visualizations, and AI-generated taste summaries.
+SoundPrint is a Spotify analytics app that turns listening data into explainable taste insights, recent-vs-long-term comparisons, AI-generated summaries, and data-informed artist recommendations.
 
 ## Features
 
@@ -11,6 +11,16 @@ SoundPrint helps Spotify users understand how their music taste changes over tim
 - Artist frequency chart
 - Recent taste shift metric comparing short-term and all-time artists
 - AI-generated taste summary using Gemini
+- Gemini-generated recommended artists based on listening profile signals
+- Backend cleanup that removes duplicate recommendations and already-known artists
+- Recommendation signal tags explaining why each artist fits
+- Spotify search links for recommended artists
+
+## Recommendation System
+
+SoundPrint recommendations are generated from profile signals including top artists, top tracks, artist frequency, genres from top artists, artist variety, top artist overlap, repeated artists, and recent taste shift.
+
+Gemini is used to generate possible artists and explanations, but the backend validates the response before returning it to the frontend. The backend filters out artists already present in the user's top artists or recommendation seeds, removes duplicate results, requires valid names and reasons, cleans up signal tags, and limits results to four recommendations.
 
 ## Tech Stack
 
@@ -23,8 +33,9 @@ SoundPrint helps Spotify users understand how their music taste changes over tim
 
 ## Architecture
 
-The frontend handles Spotify authentication, data fetching, and dashboard rendering.
-The backend computes taste analytics and generates AI summaries from the analyzed listening profile.
+The frontend handles Spotify authentication, Spotify data fetching, dashboard rendering, loading/error states, and recommendation display.
+
+The backend computes listening analytics, builds prompts from structured taste signals, generates AI summaries and recommendations with Gemini, and validates AI recommendation output before sending it back to the frontend.
 
 ## Running Locally
 
@@ -61,11 +72,17 @@ GEMINI_API_KEY=your_gemini_api_key_here
 - Top artist overlap
 - Artist frequency
 - Recent taste shift
+- Unique genres across top artists
+- Recommendation seeds
+- Recommendation signal tags
 
 ## Roadmap
 
-- Personalized recommendation engine
-- Recommendation explanations
-- Taste similarity scoring
-- Genre and artist clustering
-- Expanded recent-vs-long-term taste comparison
+- Add a clearer recommendation score for each suggested artist
+- Improve recommendation explanations using more of the user's listening patterns
+- Look up recommended artists through Spotify to show images and direct artist pages
+- Add better charts for genre, artist, and taste-shift patterns
+- Compare recent, medium-term, and long-term taste in more detail
+- Explore taste groups or clusters based on listening patterns
+- Deploy the app
+- Add screenshots and a demo GIF to the README
