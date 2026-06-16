@@ -352,11 +352,26 @@ def validate_recommendations(profile: RecommendArtistsRequest, recommendations):
 
         if normalized_name in seen_artist_names:
             continue
+
+        clean_signals = []
         
+        for signal in signals:
+            if not isinstance(signal, str):
+                continue
+
+            clean_signal = signal.strip()
+
+            if not clean_signal:
+                continue
+
+            clean_signals.append(clean_signal)
+
+        clean_signals = clean_signals[:3]
+
         valid_recommendations.append({
             "name": name,
             "reason": reason,
-            "signals": signals,
+            "signals": clean_signals,
         })
 
         seen_artist_names.add(normalized_name)
