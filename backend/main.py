@@ -381,10 +381,34 @@ def validate_recommendations(profile: RecommendArtistsRequest, recommendations):
     
     return valid_recommendations[:4]
 
+def score_signal(signal: str):
+    normalized_signal = signal.lower()
+
+    if "genre" in normalized_signal or "style" in normalized_signal or "sound" in normalized_signal:
+        return 10
+    
+    if "seed" in normalized_signal or "affinity" in normalized_signal or "influence" in normalized_signal:
+        return 9
+    
+    if "frequency" in normalized_signal or "repeated" in normalized_signal:
+        return 8
+    
+    if "overlap" in normalized_signal:
+        return 7
+    
+    if "variety" in normalized_signal:
+        return 6
+    
+    if "shift" in normalized_signal:
+        return 5
+    
+    return 4
+    
 def calculate_recommendation_score(profile: RecommendArtistsRequest, signals: list[str]):
     score = 60
-    
-    score += len(signals) * 8
+
+    for signal in signals:
+        score += score_signal(signal)
     
     if profile.artist_variety >= 75:
         score += 6
