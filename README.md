@@ -29,6 +29,7 @@ Gemini is used to generate possible artists and explanations, but the backend va
 - TypeScript
 - FastAPI
 - Python
+- Recharts
 - Spotify Web API
 - Gemini API
 
@@ -81,7 +82,7 @@ GEMINI_API_KEY=your_gemini_api_key_here
 
 - Improve recommendation explanations using more of the user's listening patterns
 - Look up recommended artists through Spotify to show images and direct artist pages
-- Add better charts for genre, artist, and taste-shift patterns
+- Add more charts for genre and taste-shift patterns
 - Compare recent, medium-term, and long-term taste in more detail
 - Explore taste groups or clusters based on listening patterns
 - Deploy the app

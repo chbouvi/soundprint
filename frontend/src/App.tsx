@@ -1,4 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer
+} from 'recharts'
 import './App.css'
 
 
@@ -246,9 +254,6 @@ function App() {
   const [tasteSummarySource, setTasteSummarySource] = useState("")
   const [tasteSummaryFallbackReason, setTasteSummaryFallbackReason] = useState("")
   const [isTasteSummaryLoading, setIsTasteSummaryLoading] = useState(false)
-  const maxArtistCount = tasteAnalysis && tasteAnalysis.artist_frequency.length > 0
-    ? Math.max(...tasteAnalysis.artist_frequency.map(artist => artist.count))
-    : 0
   
   const overlappingArtists = useMemo(() => {
     const topTrackArtistIds = topTracks.map(track => track.artists[0].id)
@@ -314,6 +319,10 @@ function App() {
       .catch(() => setErrorMessage("Could not analyze taste."))
       .finally(() => setIsLoadingAnalysis(false))
   }, [accessToken, topTracks, topArtists])
+
+  const artistFrequencyChartData = tasteAnalysis
+    ? tasteAnalysis.artist_frequency.slice(0, 5)
+    : []
 
   useEffect(() => {
     if (accessToken && topTracks.length > 0 && topArtists.length > 0 && tasteAnalysis) {
@@ -484,24 +493,42 @@ function App() {
       <div className="insights-grid">
       {accessToken && tasteAnalysis && (
         <section className="chart-card">
-          <h3>Artist Frequency in Top Tracks</h3>
+          <div className="chart-heading">
+            <h3>Top Artist Frequency</h3>
+            <p>Artists appearing most often across your top tracks.</p>
+          </div>
 
-          {tasteAnalysis.artist_frequency.map(artist => {
-            const barWidth = maxArtistCount > 0 ? (artist.count / maxArtistCount) * 100 : 0
-
-            return (
-              <div className="bar-row" key={artist.artist_name}>
-                <div className="bar-header">
-                  <span>{artist.artist_name}</span>
-                  <span>{artist.count}</span>
-                </div>
-
-                <div className="bar-track">
-                  <div className="bar-fill" style={{width: `${barWidth}%` }}></div>
-                </div>
-              </div>
-            )
-          })}
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={artistFrequencyChartData} margin={{ top: 8, right: 24, left: 32, bottom: 8 }} layout="vertical">
+              <XAxis type="number" domain={[0, "dataMax"]} allowDecimals={false} tick={{ fill: "#9ca3af" }} axisLine={false} tickLine={false}/>
+              <YAxis type="category" dataKey="artist_name" width={130} interval={0} tick={{ fill: "#9ca3af" }} axisLine={false} tickLine={false}/>
+              <Tooltip 
+                cursor={{ fill: "rgba(156, 163, 175, 0.08)"}}
+                contentStyle={{
+                  background: "#191a20",
+                  border: "1px solid #2d2d36",
+                  borderRadius: "8px",
+                  color: "#d1d5db"
+                }}
+                labelStyle={{
+                  color: "#f3f4f6",
+                  fontWeight: 700
+                }}
+                itemStyle={{
+                  color: "#9cff38"
+                }}
+                formatter={(value) => {
+                  value = Number(value)
+                  if (value === 1) {
+                    return [1, "top track"]
+                  } else {
+                    return [value, "top tracks"]
+                  }
+                }}
+              />
+              <Bar dataKey="count" fill="#9cff38" radius={[0, 8, 8, 0]}/>
+            </BarChart>
+          </ResponsiveContainer>
         </section>
       )}
 

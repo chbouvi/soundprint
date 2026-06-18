@@ -100,29 +100,20 @@ h2 {
   max-width: 720px;
 }
 
-.bar-row {
-  margin-top: 14px;
+.chart-heading {
+  text-align: left;
+  margin-bottom: 10px;
 }
 
-.bar-header {
-  display: flex;
-  justify-content: space-between;
-  color: #d1d5db;
+.chart-heading h3 {
+  margin: 0;
+}
+
+.chart-heading p {
+  margin-top: 6px;
+  color: #9ca3af;
   font-size: 14px;
-  margin-bottom: 6px;
-}
-
-.bar-track {
-  height: 8px;
-  background: #2d2d36;
-  border-radius: 9999px;
-  overflow: hidden;
-}
-
-.bar-fill {
-  height: 100%;
-  background: chartreuse;
-  border-radius: 9999px;
+  line-height: 1.4;
 }
 
 .summary-card {
