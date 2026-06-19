@@ -55,6 +55,7 @@ type RecommendedArtist = {
   reason: string
   signals: string[]
   score: number
+  score_factors: ScoreFactor[]
   imageUrl?: string | null
   spotifyUrl?: string | null
 }
@@ -67,6 +68,11 @@ type SpotifyArtistSearchResult = {
   images: {
     url: string
   }[]
+}
+
+type ScoreFactor = {
+  label: string
+  points: number
 }
 
 function App() {
@@ -474,6 +480,8 @@ function App() {
     }
   }
 
+  const [openScoreDetails, setOpenScoreDetails] = useState<string | null>(null)
+
   return (
     <main>
       <h1>SoundPrint</h1>
@@ -659,7 +667,18 @@ function App() {
                       )}
                       <span className="recommended-name">{recommendedArtist.name}</span>
                     </div>
-                    <span className="recommended-score">{recommendedArtist.score}% fit</span>
+                    <button 
+                      className="recommended-score"
+                      onClick={() => {
+                        setOpenScoreDetails(
+                          openScoreDetails === recommendedArtist.name
+                            ? null
+                            : recommendedArtist.name
+                        )
+                      }}
+                    >
+                      {recommendedArtist.score}% fit
+                    </button>
                   </div>
                   <p>{recommendedArtist.reason}</p>
                   {recommendedArtist.signals.length > 0 && (
@@ -667,6 +686,21 @@ function App() {
                       {recommendedArtist.signals.map(signal => (
                         <span className="recommended-signal" key={signal}>
                           {signal}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {recommendedArtist.score_factors.length > 0 && openScoreDetails === recommendedArtist.name && (
+                    <div className="score-factors">
+                      <div className="score-factors-title">Fit factors</div>
+                      <div className="score-factors-note">
+                        Base 60 plus selected matching signals.
+                      </div>
+
+                      {recommendedArtist.score_factors.slice(0, 3).map(factor => (
+                        <span className="score-factor" key={factor.label}>
+                          <span>{factor.label}</span> 
+                          <span>+{factor.points}</span>
                         </span>
                       ))}
                     </div>
