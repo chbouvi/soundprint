@@ -55,6 +55,7 @@ type RecommendedArtist = {
   reason: string
   signals: string[]
   score: number
+  imageUrl?: string | null
   spotifyUrl?: string | null
 }
 
@@ -63,6 +64,9 @@ type SpotifyArtistSearchResult = {
   external_urls: {
     spotify: string
   }
+  images: {
+    url: string
+  }[]
 }
 
 function App() {
@@ -416,11 +420,12 @@ function App() {
             const recommendations = data.recommendations as RecommendedArtist[]
             const recommendationsWithUrls = await Promise.all(
               recommendations.map(async recommendedArtist => {
-                const spotifyUrl = await getSpotifyArtistUrl(recommendedArtist.name)
+                const spotifyArtistDetails = await getSpotifyArtistDetails(recommendedArtist.name)
 
                 return {
                   ...recommendedArtist,
-                  spotifyUrl
+                  spotifyUrl: spotifyArtistDetails?.spotifyUrl ?? null,
+                  imageUrl: spotifyArtistDetails?.imageUrl ?? null
                 }
               })
             )
@@ -439,7 +444,7 @@ function App() {
     return `https://open.spotify.com/search/${encodeURIComponent(artistName)}`
   }
 
-  async function getSpotifyArtistUrl(artistName: string) {
+  async function getSpotifyArtistDetails(artistName: string) {
     try {
       const response = await fetch(
         `https://api.spotify.com/v1/search?q=${encodeURIComponent(artistName)}&type=artist&limit=5`,
@@ -460,9 +465,12 @@ function App() {
         return null
       }
 
-      return matchingArtist.external_urls.spotify
+      return {
+        spotifyUrl: matchingArtist.external_urls.spotify,
+        imageUrl: matchingArtist.images[0]?.url ?? null
+      }
     } catch {
-      return null
+       return null
     }
   }
 
@@ -641,7 +649,16 @@ function App() {
               {recommendedArtists.map(recommendedArtist => (
                 <div className="recommended-artist" key={recommendedArtist.name}>
                   <div className="recommended-header">
-                    <span className="recommended-name">{recommendedArtist.name}</span>
+                    <div className="recommended-title">
+                      {recommendedArtist.imageUrl && (
+                        <img 
+                          className="recommended-image"
+                          src={recommendedArtist.imageUrl}
+                          alt={`Image of ${recommendedArtist.name}`}
+                        />
+                      )}
+                      <span className="recommended-name">{recommendedArtist.name}</span>
+                    </div>
                     <span className="recommended-score">{recommendedArtist.score}% fit</span>
                   </div>
                   <p>{recommendedArtist.reason}</p>
