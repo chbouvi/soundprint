@@ -58,6 +58,13 @@ type RecommendedArtist = {
   spotifyUrl?: string | null
 }
 
+type SpotifyArtistSearchResult = {
+  name: string
+  external_urls: {
+    spotify: string
+  }
+}
+
 function App() {
   const generateRandomString = (length: number) => {
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -435,7 +442,7 @@ function App() {
   async function getSpotifyArtistUrl(artistName: string) {
     try {
       const response = await fetch(
-        `https://api.spotify.com/v1/search?q=${encodeURIComponent(artistName)}&type=artist&limit=1`,
+        `https://api.spotify.com/v1/search?q=${encodeURIComponent(artistName)}&type=artist&limit=5`,
         {
           headers: {
             Authorization: "Bearer " + accessToken
@@ -444,13 +451,16 @@ function App() {
       )
 
       const data = await response.json()
-      const artist = data.artists.items[0]
+      const artists = data.artists.items as SpotifyArtistSearchResult[]
+      const matchingArtist = artists.find(artist => 
+        artist.name.toLowerCase() === artistName.toLowerCase()
+      )
 
-      if (!artist) {
+      if (!matchingArtist) {
         return null
       }
 
-      return artist.external_urls.spotify
+      return matchingArtist.external_urls.spotify
     } catch {
       return null
     }
