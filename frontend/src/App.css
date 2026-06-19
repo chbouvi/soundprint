@@ -91,6 +91,35 @@ h2 {
   font-size: 13px;
 }
 
+.taste-shift-details {
+  margin-top: 16px;
+}
+
+.taste-shift-label {
+  margin: 0 0 8px;
+  color: #9ca3af;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.taste-shift-artists {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.taste-shift-pill {
+  font-size: 11px;
+  padding: 5px 10px;
+  background: rgba(127, 255, 0, 0.08);
+  border: 1px solid rgba(127, 255, 0, 0.28);
+  border-radius: 9999px;
+  min-width: 95px;
+  text-align: center;
+}
+
 .chart-card {
   background: #1f1f26;
   border: 1px solid #2d2d36;

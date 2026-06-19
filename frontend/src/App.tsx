@@ -239,6 +239,8 @@ function App() {
   const longTermArtistIds = longTermArtists.map(artist => artist.id)
   const longTermArtistSet = new Set(longTermArtistIds)
   const stableArtists = shortTermArtists.filter(artist => longTermArtistSet.has(artist.id))
+  const newRecentArtists = shortTermArtists.filter(artist => !longTermArtistSet.has(artist.id))
+
   const tasteShift = shortTermArtists.length > 0
     ? Math.round((1 - (stableArtists.length / shortTermArtists.length)) * 100)
     : 0
@@ -486,6 +488,17 @@ function App() {
           <span className="stat-label">Recent Taste Shift</span>
           <strong>{isLoadingTasteShift ? "..." : `${tasteShift}%`}</strong>
           <span className="stat-caption">of recent artists are not in your all-time top artists</span>
+
+          {newRecentArtists.length > 0 && (
+            <div className="taste-shift-details">
+              <p className="taste-shift-label">Examples</p>
+              <div className="taste-shift-artists">
+                {newRecentArtists.slice(0, 3).map(artist => (
+                  <span key={artist.name} className="taste-shift-pill">{artist.name}</span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
       )}
