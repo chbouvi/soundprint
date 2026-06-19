@@ -55,6 +55,7 @@ type RecommendedArtist = {
   reason: string
   signals: string[]
   score: number
+  spotifyUrl?: string | null
 }
 
 function App() {
@@ -403,9 +404,20 @@ function App() {
         })
       })
         .then(response => response.json())
-        .then(data => {
+        .then(async data => {
           if (data.recommendations) {
-            setRecommendedArtists(data.recommendations)
+            const recommendations = data.recommendations as RecommendedArtist[]
+            const recommendationsWithUrls = await Promise.all(
+              recommendations.map(async recommendedArtist => {
+                const spotifyUrl = await getSpotifyArtistUrl(recommendedArtist.name)
+
+                return {
+                  ...recommendedArtist,
+                  spotifyUrl
+                }
+              })
+            )
+            setRecommendedArtists(recommendationsWithUrls)
           } else {
             setRecommendationError("Could not load recommendation artists.")
           }
@@ -418,6 +430,30 @@ function App() {
 
   const getSpotifySearchUrl = (artistName: string) => {
     return `https://open.spotify.com/search/${encodeURIComponent(artistName)}`
+  }
+
+  async function getSpotifyArtistUrl(artistName: string) {
+    try {
+      const response = await fetch(
+        `https://api.spotify.com/v1/search?q=${encodeURIComponent(artistName)}&type=artist&limit=1`,
+        {
+          headers: {
+            Authorization: "Bearer " + accessToken
+          }
+        }
+      )
+
+      const data = await response.json()
+      const artist = data.artists.items[0]
+
+      if (!artist) {
+        return null
+      }
+
+      return artist.external_urls.spotify
+    } catch {
+      return null
+    }
   }
 
   return (
@@ -610,7 +646,7 @@ function App() {
                   )}
                   <a
                     className="recommended-link"
-                    href={getSpotifySearchUrl(recommendedArtist.name)}
+                    href={recommendedArtist.spotifyUrl ?? getSpotifySearchUrl(recommendedArtist.name)}
                     target="_blank"
                     rel="noreferrer"
                   >
