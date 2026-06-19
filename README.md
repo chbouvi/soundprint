@@ -14,12 +14,14 @@ SoundPrint is a Spotify analytics app that turns listening data into explainable
 - Gemini-generated recommended artists based on listening profile signals
 - Backend cleanup that removes duplicate recommendations and already-known artists
 - Recommendation signal tags explaining why each artist fits
-- Spotify search links for recommended artists
+- Direct Spotify artist links for recommended artists, with search fallback when no exact match is found
 - Recommendation fit scores based on cleaned signal tags and listening profile metrics
 
 ## Recommendation System
 
 SoundPrint recommendations are generated from profile signals including top artists, top tracks, artist frequency, genres from top artists, artist variety, top artist overlap, repeated artists, and recent taste shift. Each recommendation also receives a simple fit score based on cleaned signal tags and profile metrics such as artist variety, top artist overlap, and recent taste shift.
+
+Recommended artist names are checked against Spotify Search API results so the app can link to exact artist pages when possible, while falling back to Spotify search if no exact match is found.
 
 Gemini is used to generate possible artists and explanations, but the backend validates the response before returning it to the frontend. The backend filters out artists already present in the user's top artists or recommendation seeds, removes duplicate results, requires valid names and reasons, cleans up signal tags, and limits results to four recommendations.
 
@@ -81,7 +83,7 @@ GEMINI_API_KEY=your_gemini_api_key_here
 ## Roadmap
 
 - Improve recommendation explanations using more of the user's listening patterns
-- Look up recommended artists through Spotify to show images and direct artist pages
+- Add Spotify artist images to recommended artist cards
 - Add more charts for genre and taste-shift patterns
 - Compare recent, medium-term, and long-term taste in more detail
 - Explore taste groups or clusters based on listening patterns
