@@ -565,6 +565,34 @@ function App() {
       </section>
       )}
 
+      {accessToken && !isLoadingTasteShift && (newRecentArtists.length > 0 || stableArtists.length > 0) && (
+        <section className="taste-comparison-card">
+          <h3>Recent vs Long-Term Taste</h3>
+          <p className="taste-comparison-caption">
+            Short-term top artists compared with all-time top artists.
+          </p>
+          <div className="taste-comparison-groups">
+            <div className="taste-comparison-group">
+              <h4>New recently</h4>
+              <div className="taste-comparison-pills">
+                {newRecentArtists.slice(0, 5).map(artist => (
+                  <span key={artist.name} className="new-recent-pill">{artist.name}</span>
+                ))}
+              </div>
+            </div>
+
+            <div className="taste-comparison-group">
+              <h4>Still consistent</h4>
+              <div className="taste-comparison-pills">
+                {stableArtists.slice(0, 5).map(artist => (
+                  <span key={artist.name} className="consistent-pill">{artist.name}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       <div className="insights-grid">
       {accessToken && tasteAnalysis && (
         <section className="chart-card">

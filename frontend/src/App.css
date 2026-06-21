@@ -120,6 +120,68 @@ h2 {
   text-align: center;
 }
 
+.taste-comparison-card {
+  max-width: 820px;
+  margin: 28px auto;
+  padding: 24px;
+  background: #1f1f26;
+  border: 1px solid #2d2d36;
+  border-radius: 12px;
+}
+
+.taste-comparison-card h3 {
+  margin: 0 0 6px;
+  color: #a9afbd;
+  text-align: center;
+  font-size: 20px;
+}
+
+.taste-comparison-caption {
+  margin: 0 0 22px;
+  color: #9ca3af;
+  text-align: center;
+  font-size: 12px;
+}
+
+.taste-comparison-groups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.taste-comparison-group h4 {
+  margin: 0 0 10px;
+  color: #d1d5db;
+  font-size: 14px;
+  text-align: center;
+}
+
+.taste-comparison-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.new-recent-pill,
+.consistent-pill {
+  border-radius: 9999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: #d1d5db;
+  border: 1px solid #3f4653;
+}
+
+.new-recent-pill {
+  border-color: rgba(127, 255, 0, 0.28);
+  background: rgba(127, 255, 0, 0.08);
+}
+
+.consistent-pill {
+  border-color: #3f4653;
+  background: #24262e;
+}
+
 .chart-card {
   background: #1f1f26;
   border: 1px solid #2d2d36;
