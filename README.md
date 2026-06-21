@@ -9,7 +9,7 @@ SoundPrint is a Spotify analytics app that turns listening data into explainable
 - Album covers and artist images from the Spotify API
 - Backend-generated taste analytics with FastAPI
 - Artist frequency chart
-- Recent taste shift metric comparing short-term and all-time artists
+- Recent taste shift metric and comparison panel for short-term vs all-time artists
 - AI-generated taste summary using Gemini
 - Gemini-generated recommended artists based on listening profile signals
 - Backend cleanup that removes duplicate recommendations and already-known artists
@@ -78,6 +78,7 @@ GEMINI_API_KEY=your_gemini_api_key_here
 - Top artist overlap
 - Artist frequency
 - Recent taste shift
+- Recent vs long-term artist comparison
 - Unique genres across top artists
 - Recommendation seeds
 - Recommendation signal tags
@@ -86,7 +87,7 @@ GEMINI_API_KEY=your_gemini_api_key_here
 
 - Improve recommendation explanations using more of the user's listening patterns
 - Add more charts for genre and taste-shift patterns
-- Compare recent, medium-term, and long-term taste in more detail
+- Compare recent, medium-term, and long-term taste with more detailed breakdowns
 - Explore taste groups or clusters based on listening patterns
 - Deploy the app
 - Add screenshots and a demo GIF to the README
