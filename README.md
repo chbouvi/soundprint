@@ -18,10 +18,11 @@ SoundPrint is a Spotify analytics app that turns listening data into explainable
 - Recommendation fit scores based on cleaned signal tags and listening profile metrics
 - Spotify artist images on recommended artist cards when an exact artist match is found
 - Clickable recommendation fit scores with explanations
+- AI-generated sound profile breakdown with reusable style tags counted from the user's listening patterns
 
 ## Recommendation System
 
-SoundPrint recommendations are generated from profile signals including top artists, top tracks, artist frequency, genres from top artists, artist variety, top artist overlap, repeated artists, and recent taste shift. Each recommendation also receives a simple fit score based on cleaned signal tags and profile metrics such as artist variety, top artist overlap, and recent taste shift. Fit scores start from a base score and increase based on matching recommendation signals and profile-level metrics.
+SoundPrint recommendations are generated from profile signals including top artists, top tracks, artist frequency, artist variety, top artist overlap, repeated artists, and recent taste shift. Each recommendation also receives a simple fit score based on cleaned signal tags and profile metrics such as artist variety, top artist overlap, and recent taste shift. Fit scores start from a base score and increase based on matching recommendation signals and profile-level metrics.
 
 Recommended artist names are checked against Spotify Search API results so the app can link to exact artist pages and show artist images when possible. If no exact match is found, SoundPrint falls back to a Spotify search link.
 
@@ -79,14 +80,14 @@ GEMINI_API_KEY=your_gemini_api_key_here
 - Artist frequency
 - Recent taste shift
 - Recent vs long-term artist comparison
-- Unique genres across top artists
 - Recommendation seeds
 - Recommendation signal tags
+- Most common sound profile tags
 
 ## Roadmap
 
 - Improve recommendation explanations using more of the user's listening patterns
-- Add more charts for genre and taste-shift patterns
+- Add more charts for sound profile and taste-shift patterns
 - Compare recent, medium-term, and long-term taste with more detailed breakdowns
 - Explore taste groups or clusters based on listening patterns
 - Deploy the app
