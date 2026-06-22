@@ -75,6 +75,11 @@ type ScoreFactor = {
   points: number
 }
 
+type SoundProfileTag = {
+  tag: string
+  count: number
+}
+
 function App() {
   const generateRandomString = (length: number) => {
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -344,6 +349,8 @@ function App() {
     ? tasteAnalysis.artist_frequency.slice(0, 5)
     : []
 
+  const [soundProfile, setSoundProfile] = useState<SoundProfileTag[]>([])
+
   useEffect(() => {
     if (accessToken && topTracks.length > 0 && topArtists.length > 0 && tasteAnalysis) {
       setTasteSummary("")
@@ -373,6 +380,7 @@ function App() {
         .then(data => {
           if (data.summary) {
             setTasteSummary(data.summary)
+            setSoundProfile(data.sound_profile ?? [])
             setTasteSummarySource(data.source)
             setTasteSummaryFallbackReason(data.fallback_reason || "")
           } else {
@@ -394,6 +402,8 @@ function App() {
     tasteAnalysis?.artist_frequency,
     tasteShift
   ])
+
+  const styleTagFrequencyChartData = soundProfile.slice(0, 5)
 
   useEffect(() => {
     if (accessToken && topTracks.length > 0 && topArtists.length > 0 && tasteAnalysis && uniqueRecommendationSeeds.length > 0) {
@@ -626,6 +636,47 @@ function App() {
                     return [1, "top track"]
                   } else {
                     return [value, "top tracks"]
+                  }
+                }}
+              />
+              <Bar dataKey="count" fill="#9cff38" radius={[0, 8, 8, 0]}/>
+            </BarChart>
+          </ResponsiveContainer>
+        </section>
+      )}
+
+      {accessToken && soundProfile.length > 0 && (
+        <section className="chart-card">
+          <div className="chart-heading">
+            <h3>Sound Profile Breakdown</h3>
+            <p>AI-generated style tags counted across your listening profile.</p>
+          </div>
+
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={styleTagFrequencyChartData} margin={{ top: 8, right: 24, left: 32, bottom: 8 }} layout="vertical">
+              <XAxis type="number" domain={[0, "dataMax"]} allowDecimals={false} tick={{ fill: "#9ca3af" }} axisLine={false} tickLine={false}/>
+              <YAxis type="category" dataKey="tag" width={130} interval={0} tick={{ fill: "#9ca3af" }} axisLine={false} tickLine={false}/>
+              <Tooltip 
+                cursor={{ fill: "rgba(156, 163, 175, 0.08)"}}
+                contentStyle={{
+                  background: "#191a20",
+                  border: "1px solid #2d2d36",
+                  borderRadius: "8px",
+                  color: "#d1d5db"
+                }}
+                labelStyle={{
+                  color: "#f3f4f6",
+                  fontWeight: 700
+                }}
+                itemStyle={{
+                  color: "#9cff38"
+                }}
+                formatter={(value) => {
+                  value = Number(value)
+                  if (value === 1) {
+                    return [1, "tag"]
+                  } else {
+                    return [value, "tags"]
                   }
                 }}
               />

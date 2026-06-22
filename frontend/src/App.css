@@ -240,7 +240,7 @@ h2 {
 .insights-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  gap: 20px 24px;
   width: min(100%, 1250px);
   margin: 28px auto 0;
   align-items: stretch;
@@ -255,6 +255,9 @@ h2 {
 }
 
 .summary-card {
+  grid-column: 1 / -1;
+  max-width: 720px;
+  justify-self: center;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

@@ -112,6 +112,13 @@ def get_env_value(key: str):
 
     return None
 
+def create_fallback_sound_profile(profile: TasteSummaryRequest):
+    return [
+        {"tag": "artist variety", "count": 1},
+        {"tag": "top artist overlap", "count": 1},
+        {"tag": "recent taste shift", "count": 1}
+    ]
+
 
 def create_fallback_summary(profile: TasteSummaryRequest, reason: str = "unknown"):
     if profile.artist_variety >= 80:
@@ -141,7 +148,12 @@ def create_fallback_summary(profile: TasteSummaryRequest, reason: str = "unknown
     if top_artist_preview:
         summary += f" Right now, your artist mix is led by {top_artist_preview}."
 
-    return {"summary": summary, "source": "fallback", "fallback_reason": reason}
+    return {
+        "summary": summary, 
+        "source": "fallback", 
+        "fallback_reason": reason, 
+        "sound_profile": create_fallback_sound_profile(profile)
+    }
 
 
 def create_taste_prompt(profile: TasteSummaryRequest):
@@ -174,10 +186,24 @@ Use this data:
 
 Write 3-5 sentences. Focus the summary on the selected time range. Only mention all-time listening when explaining recent taste shift. Sound thoughtful and human, but do not be corny.
 Mention patterns in the user's taste. Do not say you are an AI.
+
+Return only JSON in this exact format: 
+{{
+    "summary": "3-5 sentence taste summary",
+    "sound_profile_items": [
+        {{
+            "name": "top artist or repeated top-track artist",
+            "tags": ["reusable genre/style tag", "reusable genre/style tag", "reusable genre/style tag"]
+        }}
+    ]
+}}
+
+Use repeated, reusable tags when multiple artists or tracks share a similar sound. Avoid overly specific descriptions.
+
 """
 
 
-def create_gemini_summary(profile: TasteSummaryRequest, api_key: str):
+def create_gemini_taste_profile(profile: TasteSummaryRequest, api_key: str):
     url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent"
     payload = {
         "contents": [
@@ -206,7 +232,6 @@ def create_gemini_summary(profile: TasteSummaryRequest, api_key: str):
 
     return data["candidates"][0]["content"]["parts"][0]["text"]
 
-
 @app.post("/api/taste-summary")
 def create_taste_summary(profile: TasteSummaryRequest):
     api_key = get_env_value("GEMINI_API_KEY")
@@ -215,8 +240,21 @@ def create_taste_summary(profile: TasteSummaryRequest):
         return create_fallback_summary(profile, "missing_api_key")
 
     try:
-        summary = create_gemini_summary(profile, api_key)
-        return {"summary": summary, "source": "gemini"}
+        taste_profile = create_gemini_taste_profile(profile, api_key)
+
+        cleaned_response = taste_profile.strip()
+
+        if cleaned_response.startswith("```json"):
+            cleaned_response = cleaned_response.removeprefix("```json").removesuffix("```").strip()
+        elif cleaned_response.startswith("```"):
+            cleaned_response = cleaned_response.removeprefix("```").removesuffix("```").strip()
+        taste_profile = json.loads(cleaned_response)
+
+        return {
+            "summary": taste_profile["summary"], 
+            "source": "gemini", 
+            "sound_profile": count_sound_profile_tags(taste_profile["sound_profile_items"])
+        }
     except HTTPError as error:
         error_body = error.read().decode("utf-8")
         print(f"Gemini HTTP error: {error.code} {error_body}")
@@ -224,10 +262,30 @@ def create_taste_summary(profile: TasteSummaryRequest):
     except (URLError, TimeoutError) as error:
         print(f"Gemini network error: {error}")
         return create_fallback_summary(profile, "gemini_network_error")
-    except (KeyError, IndexError, json.JSONDecodeError) as error:
+    except (KeyError, IndexError, TypeError, ValueError, json.JSONDecodeError) as error:
         print(f"Gemini response parse error: {error}")
         return create_fallback_summary(profile, "gemini_response_parse_error")
     
+def count_sound_profile_tags(sound_profile_items):
+    tag_counts: dict[str, int] = {}
+
+    for sound_profile_item in sound_profile_items:
+        for tag in sound_profile_item["tags"]:
+            if tag in tag_counts:
+                tag_counts[tag] += 1
+            else:
+                tag_counts[tag] = 1
+
+    sound_profile = [
+        {"tag": tag, "count": count}
+        for tag, count in sorted(
+            tag_counts.items(),
+            key=lambda item: item[1],
+            reverse=True
+        )
+    ]
+
+    return sound_profile
 
 def call_gemini(prompt: str, api_key: str):
     url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent"
