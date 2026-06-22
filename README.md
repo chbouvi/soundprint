@@ -2,6 +2,17 @@
 
 SoundPrint is a Spotify analytics app that turns listening data into explainable taste insights, recent-vs-long-term comparisons, AI-generated summaries, and data-informed artist recommendations.
 
+## Screenshots
+
+### Dashboard Overview
+![Dashboard overview](docs/images/dashboard-overview.png)
+
+### AI Taste Analysis
+![AI taste analysis](docs/images/ai-taste-analysis.png)
+
+### Recommended Artists
+![Recommended artists](docs/images/recommended-artists.png)
+
 ## Features
 
 - Spotify OAuth login with PKCE
@@ -91,4 +102,4 @@ GEMINI_API_KEY=your_gemini_api_key_here
 - Compare recent, medium-term, and long-term taste with more detailed breakdowns
 - Explore taste groups or clusters based on listening patterns
 - Deploy the app
-- Add screenshots and a demo GIF to the README
+- Add a short demo video/GIF showing the full app
