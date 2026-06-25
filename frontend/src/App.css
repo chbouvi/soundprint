@@ -574,3 +574,9 @@ h2 {
 .artist-name {
   color: #d1d5db;
 }
+
+@media (max-width: 700px) {
+  .taste-grid {
+    grid-template-columns: 1fr;
+  }
+}
