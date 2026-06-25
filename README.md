@@ -13,6 +13,14 @@ SoundPrint is a Spotify analytics app that turns listening data into explainable
 ### Recommended Artists
 ![Recommended artists](docs/images/recommended-artists.png)
 
+## Demo Flow
+
+1. Connect Spotify to load listening data.
+2. Select a time range for top tracks and artists.
+3. Review taste metrics, artist frequency, and recent vs long-term taste changes.
+4. Read the AI-generated taste summary and sound profile breakdown.
+5. Explore recommended artists with fit scores, signal tags, and Spotify links.
+
 ## Features
 
 - Spotify OAuth login with PKCE
