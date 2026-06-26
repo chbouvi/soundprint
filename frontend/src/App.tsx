@@ -223,6 +223,7 @@ function App() {
 
   const [shortTermArtists, setShortTermArtists] = useState<Artist[]>([])
   const [longTermArtists, setLongTermArtists] = useState<Artist[]>([])
+  const [mediumTermArtists, setMediumTermArtists] = useState<Artist[]>([])
   const [isLoadingTasteShift, setIsLoadingTasteShift] = useState(false)
 
   useEffect(() => {
@@ -242,6 +243,19 @@ function App() {
           setShortTermArtists(data.items)
         }
       })
+    
+    const mediumTermRequest = fetch("https://api.spotify.com/v1/me/top/artists?limit=10&time_range=medium_term", {
+      method: "GET",
+      headers: {
+        "Authorization": "Bearer " + accessToken
+      }
+    })
+      .then(response => response.json()) 
+      .then(data => {
+        if (data.items) {
+          setMediumTermArtists(data.items)
+        }
+      })
 
     const longTermRequest = fetch("https://api.spotify.com/v1/me/top/artists?limit=10&time_range=long_term", {
       method: "GET",
@@ -255,14 +269,30 @@ function App() {
           setLongTermArtists(data.items)
         }
       })
-    Promise.all([shortTermRequest, longTermRequest])
+    Promise.all([shortTermRequest, mediumTermRequest, longTermRequest])
       .finally(() => setIsLoadingTasteShift(false))
-  }, [accessToken])
+  }, [accessToken])  
+  
+  const shortTermArtistIds = shortTermArtists.map(artist => artist.id)
+  const shortTermArtistSet = new Set(shortTermArtistIds)
+
+  const mediumTermArtistIds = mediumTermArtists.map(artist => artist.id)
+  const mediumTermArtistSet = new Set(mediumTermArtistIds)
 
   const longTermArtistIds = longTermArtists.map(artist => artist.id)
   const longTermArtistSet = new Set(longTermArtistIds)
+
   const stableArtists = shortTermArtists.filter(artist => longTermArtistSet.has(artist.id))
   const newRecentArtists = shortTermArtists.filter(artist => !longTermArtistSet.has(artist.id))
+
+  const consistentAcrossAll = shortTermArtists.filter(artist => mediumTermArtistSet.has(artist.id) && longTermArtistSet.has(artist.id))
+  const consistentAcrossAllIds = consistentAcrossAll.map(artist => artist.id)
+  const consistentAcrossAllSet = new Set(consistentAcrossAllIds)
+
+  const mediumTermBridgeArtists = mediumTermArtists.filter(artist => 
+    (shortTermArtistSet.has(artist.id) || longTermArtistSet.has(artist.id)) &&
+    !consistentAcrossAllSet.has(artist.id)
+  )
 
   const tasteShift = shortTermArtists.length > 0
     ? Math.round((1 - (stableArtists.length / shortTermArtists.length)) * 100)
@@ -575,11 +605,11 @@ function App() {
       </section>
       )}
 
-      {accessToken && !isLoadingTasteShift && (newRecentArtists.length > 0 || stableArtists.length > 0) && (
+      {accessToken && !isLoadingTasteShift && (newRecentArtists.length > 0 || mediumTermBridgeArtists.length > 0 || consistentAcrossAll.length > 0) && (
         <section className="taste-comparison-card">
-          <h3>Recent vs Long-Term Taste</h3>
+          <h3>Taste Timeline</h3>
           <p className="taste-comparison-caption">
-            Short-term top artists compared with all-time top artists.
+            Short-term, six-month, and all-time artists compared.
           </p>
           <div className="taste-comparison-groups">
             <div className="taste-comparison-group">
@@ -592,9 +622,18 @@ function App() {
             </div>
 
             <div className="taste-comparison-group">
-              <h4>Still consistent</h4>
+              <h4>Six-month bridge</h4>
               <div className="taste-comparison-pills">
-                {stableArtists.slice(0, 5).map(artist => (
+                {mediumTermBridgeArtists.slice(0,5).map(artist => (
+                  <span key={artist.name} className="six-month-pill">{artist.name}</span>
+                ))}
+              </div>
+            </div>
+
+            <div className="taste-comparison-group">
+              <h4>Consistent across all</h4>
+              <div className="taste-comparison-pills">
+                {consistentAcrossAll.slice(0, 5).map(artist => (
                   <span key={artist.name} className="consistent-pill">{artist.name}</span>
                 ))}
               </div>
