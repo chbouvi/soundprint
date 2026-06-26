@@ -5,6 +5,7 @@
 - The user connects their Spotify account through OAuth PKCE.
 - The frontend stores the Spotify access token after login for later use.
 - React fetches the user's top tracks and top artists for the selected time range.
+- The frontend fetches short-term, six-month, and all-time top artists to power the recent taste shift metric and taste timeline.
 - The frontend sends selected listening data to the backend for more analysis.
 - Backend responses are saved in React state and rendered as dashboard metrics, charts, summaries, and recommendations.
 - Changing the time range resets the entire dashboard and sends new Spotify/backend requests.
@@ -23,6 +24,7 @@
 - Top artist overlap calculates how many top artists also appear in the user's top tracks.
 - The most repeated artist highlights which artist appears most often in the user's top tracks.
 - Recent taste shift compares short-term artists against long-term artists to estimate how much their listening has changed.
+- The taste timeline compares short-term, six-month, and all-time artists, grouping them into new recently, six-month bridge, and consistent across all categories.
 - Sound profile tags summarize style patterns detected from the user's listening data.
 
 ## Sound Profile Breakdown
