@@ -70,6 +70,13 @@ h2 {
   min-width: 190px;
 }
 
+@media (max-width: 700px) {
+  .stat-card {
+    width: 100%;
+    max-width: 360px;
+  }
+}
+
 .stat-label {
   display: block;
   color: #9ca3af;
