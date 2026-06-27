@@ -39,6 +39,7 @@ SoundPrint is a Spotify analytics app that turns listening data into explainable
 - Spotify artist images on recommended artist cards when an exact artist match is found
 - Clickable recommendation fit scores with explanations
 - AI-generated sound profile breakdown with reusable style tags counted from the user's listening patterns
+- Responsive dashboard layout for desktop and narrow screens
 
 ## Recommendation System
 
@@ -63,6 +64,8 @@ Gemini is used to generate possible artists and explanations, but the backend va
 The frontend handles Spotify authentication, Spotify data fetching, dashboard rendering, loading/error states, and recommendation display.
 
 The backend computes listening analytics, builds prompts from structured taste signals, generates AI summaries and recommendations with Gemini, and validates AI recommendation output before sending it back to the frontend.
+
+See [docs/architecture.md](docs/architecture.md) for a more detailed data flow.
 
 ## Running Locally
 
@@ -102,12 +105,12 @@ GEMINI_API_KEY=your_gemini_api_key_here
 - Taste timeline with new, bridge, and consistent artists
 - Recommendation seeds
 - Recommendation signal tags
-- Most common sound profile tags
+- Sound profile tag frequency chart
 
 ## Roadmap
 
 - Improve recommendation explanations using more of the user's listening patterns
-- Add more charts for sound profile and taste-shift patterns
+- Add deeper visualizations for taste-shift patterns
 - Add deeper explanations for why artists move between recent, bridge, and consistent categories
 - Explore taste groups or clusters based on listening patterns
 - Deploy the app
