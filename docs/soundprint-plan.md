@@ -64,3 +64,9 @@ The first complete version of SoundPrint is done when a user can connect their S
 - Redirect URI: `http://127.0.0.1:5173/callback`
 - Selected API: Web API
 - SoundPrint uses PKCE, so Client Secret should not be exposed in frontend code
+
+## Recommendation Quality Note
+
+- All-time recommendations tend to repeat similar artists, but they feel relevant rather than random.
+- This may be because all-time listening is more stable and does not change as often.
+- A future improvement could label recommendations as close matches, bridge picks, or discovery picks.
