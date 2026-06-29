@@ -210,6 +210,15 @@ h2 {
   max-width: 720px;
 }
 
+.chart-card p {
+  margin-top: 6px;
+  color: #9ca3af;
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: left;
+  margin-bottom: 10px;
+}
+
 .chart-heading {
   text-align: left;
   margin-bottom: 10px;
@@ -219,11 +228,9 @@ h2 {
   margin: 0;
 }
 
-.chart-heading p {
-  margin-top: 6px;
-  color: #9ca3af;
-  font-size: 14px;
-  line-height: 1.4;
+.chart-loading {
+  color: #d1d5db;
+  line-height: 1.6;
 }
 
 .summary-card {

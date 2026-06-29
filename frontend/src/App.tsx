@@ -684,44 +684,50 @@ function App() {
         </section>
       )}
 
-      {accessToken && soundProfile.length > 0 && (
+      {accessToken && (isTasteSummaryLoading || soundProfile.length > 0) && (
         <section className="chart-card">
           <div className="chart-heading">
             <h3>Sound Profile Breakdown</h3>
-            <p>AI-generated style tags counted across your listening profile.</p>
           </div>
 
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={styleTagFrequencyChartData} margin={{ top: 8, right: 24, left: 32, bottom: 8 }} layout="vertical">
-              <XAxis type="number" domain={[0, "dataMax"]} allowDecimals={false} tick={{ fill: "#9ca3af" }} axisLine={false} tickLine={false}/>
-              <YAxis type="category" dataKey="tag" width={130} interval={0} tick={{ fill: "#9ca3af" }} axisLine={false} tickLine={false}/>
-              <Tooltip 
-                cursor={{ fill: "rgba(156, 163, 175, 0.08)"}}
-                contentStyle={{
-                  background: "#191a20",
-                  border: "1px solid #2d2d36",
-                  borderRadius: "8px",
-                  color: "#d1d5db"
-                }}
-                labelStyle={{
-                  color: "#f3f4f6",
-                  fontWeight: 700
-                }}
-                itemStyle={{
-                  color: "#9cff38"
-                }}
-                formatter={(value) => {
-                  value = Number(value)
-                  if (value === 1) {
-                    return [1, "tag"]
-                  } else {
-                    return [value, "tags"]
-                  }
-                }}
-              />
-              <Bar dataKey="count" fill="#9cff38" radius={[0, 8, 8, 0]}/>
-            </BarChart>
-          </ResponsiveContainer>
+          {isTasteSummaryLoading ? (
+            <p className="chart-loading">Building sound profile...</p>
+          ) : (
+            <>
+              <p>AI-generated style tags counted across your listening profile.</p>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={styleTagFrequencyChartData} margin={{ top: 8, right: 24, left: 32, bottom: 8 }} layout="vertical">
+                  <XAxis type="number" domain={[0, "dataMax"]} allowDecimals={false} tick={{ fill: "#9ca3af" }} axisLine={false} tickLine={false}/>
+                  <YAxis type="category" dataKey="tag" width={130} interval={0} tick={{ fill: "#9ca3af" }} axisLine={false} tickLine={false}/>
+                  <Tooltip
+                    cursor={{ fill: "rgba(156, 163, 175, 0.08)"}}
+                    contentStyle={{
+                      background: "#191a20",
+                      border: "1px solid #2d2d36",
+                      borderRadius: "8px",
+                      color: "#d1d5db"
+                    }}
+                    labelStyle={{
+                      color: "#f3f4f6",
+                      fontWeight: 700
+                    }}
+                    itemStyle={{
+                      color: "#9cff38"
+                    }}
+                    formatter={(value) => {
+                      value = Number(value)
+                      if (value === 1) {
+                        return [1, "tag"]
+                      } else {
+                        return [value, "tags"]
+                      }
+                    }}
+                  />
+                  <Bar dataKey="count" fill="#9cff38" radius={[0, 8, 8, 0]}/>
+                </BarChart>
+              </ResponsiveContainer>
+            </>
+          )}
         </section>
       )}
 
