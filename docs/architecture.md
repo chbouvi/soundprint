@@ -15,7 +15,7 @@
 
 - `/api/analyze-taste` receives top track artist data and returns taste metrics.
 - `/api/taste-summary` receives the user's profile metrics and returns an AI-generated taste summary plus counted sound profile tags.
-- `/api/recommend-artists` receives the user's profile metrics and returns validated artist recommendations with reasons, signals, and fit scores.
+- `/api/recommend-artists` receives the user's profile metrics and returns validated artist recommendations with reasons, signals, fit scores, and recommendation type labels.
 
 ## Taste Analytics
 
@@ -40,7 +40,7 @@
 - The backend builds a Gemini prompt using top artists, top tracks, recommendation seeds, artist frequency, taste shift, sound profile tags, and other profile metrics.
 - Gemini returns recommended artists with reasons and signal tags.
 - The backend validates the AI-generated recommendations by filtering out artists already present in the user's top artists or recommendation seeds, removing duplicates, requiring valid names and reasons, cleaning up signal tags, and limiting the results to four recommendations.
-- Each recommendation receives a fit score based on the cleaned signal tags and profile metrics.
+- Each recommendation receives a fit score and recommendation type (close match, bridge pick, or discovery pick) based on the cleaned signal tags and profile metrics.
 - Score factors are returned so the frontend can explain why each recommended artist received its fit score.
 
 ## Spotify Artist Matching
