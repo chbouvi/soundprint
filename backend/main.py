@@ -433,7 +433,8 @@ def validate_recommendations(profile: RecommendArtistsRequest, recommendations):
             "reason": reason,
             "signals": clean_signals,
             "score": score_result["score"],
-            "score_factors": score_result["score_factors"]
+            "score_factors": score_result["score_factors"],
+            "recommendation_type": classify_recommendation(profile, clean_signals)
         })
 
         seen_artist_names.add(normalized_name)
@@ -462,6 +463,21 @@ def score_signal(signal: str):
         return 5
     
     return 4
+
+def classify_recommendation(profile, signals):
+    default = "Discovery pick"
+
+    for signal in signals:
+        normalized_signal = signal.lower()
+        if "shift" in normalized_signal:
+            return "Bridge pick"
+    
+    for signal in signals:
+        normalized_signal = signal.lower()
+        if "seed" in normalized_signal or "frequency" in normalized_signal or "repeated" in normalized_signal or "affinity" in normalized_signal or "influence" in normalized_signal:
+            return "Close match"
+        
+    return default
     
 def calculate_recommendation_score(profile: RecommendArtistsRequest, signals: list[str]):
     score = 60

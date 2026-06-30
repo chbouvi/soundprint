@@ -386,13 +386,15 @@ h2 {
   display: block;
   color: #f3f4f6;
   font-size: 16px;
+  min-width: 0;
+  line-height: 1.2;
 }
 
 .recommended-header {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
 }
 
 .recommended-title {
@@ -465,6 +467,18 @@ h2 {
 
 .score-factor + .score-factor {
   margin-top: 8px;
+}
+
+.recommendation-type {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: 3px 7px;
+  border-radius: 9999px;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #bfdbfe;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.22);
 }
 
 .recommended-signals {

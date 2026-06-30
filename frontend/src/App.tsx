@@ -56,6 +56,7 @@ type RecommendedArtist = {
   signals: string[]
   score: number
   score_factors: ScoreFactor[]
+  recommendation_type: string
   imageUrl?: string | null
   spotifyUrl?: string | null
 }
@@ -791,6 +792,9 @@ function App() {
                       )}
                       <span className="recommended-name">{recommendedArtist.name}</span>
                     </div>
+                    <span className="recommendation-type">
+                        {recommendedArtist.recommendation_type}
+                    </span>
                     <button 
                       className="recommended-score"
                       onClick={() => {
