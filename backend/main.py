@@ -434,7 +434,7 @@ def validate_recommendations(profile: RecommendArtistsRequest, recommendations):
             "signals": clean_signals,
             "score": score_result["score"],
             "score_factors": score_result["score_factors"],
-            "recommendation_type": classify_recommendation(profile, clean_signals)
+            "recommendation_type": classify_recommendation(clean_signals)
         })
 
         seen_artist_names.add(normalized_name)
@@ -464,7 +464,7 @@ def score_signal(signal: str):
     
     return 4
 
-def classify_recommendation(profile, signals):
+def classify_recommendation(signals):
     default = "Discovery pick"
 
     for signal in signals:
