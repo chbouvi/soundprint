@@ -512,7 +512,7 @@ h2 {
   font-size: 13px;
   font-weight: 700;
   text-decoration: none;
-  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2 ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
 .recommended-link:hover {
