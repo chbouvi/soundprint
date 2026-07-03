@@ -1,7 +1,7 @@
 from main import score_signal, validate_recommendations, classify_recommendation, RecommendArtistsRequest
 
 def test_score_signal():
-    assert(score_signal("Marvin Gaye frequency") > score_signal("50% taste shift"))
+    assert score_signal("Marvin Gaye frequency") > score_signal("50% taste shift")
 
 def test_validate_recommendations():
     profile = RecommendArtistsRequest(
@@ -20,12 +20,31 @@ def test_validate_recommendations():
     )
 
     recommendations = [
-        {"name": "Marvin Gaye", "reason": "...", "signals": [...]},
-        {"name": "Steely Dan", "reason": "...", "signals": [...]}
+        {"name": "Marvin Gaye", "reason": "...", "signals": ["50% taste shift"]},
+        {"name": "Steely Dan", "reason": "...", "signals": ["Jazz fusion influence"]}
     ]
 
     result = validate_recommendations(profile, recommendations)
 
     names = [recommendation["name"] for recommendation in result]
 
-    assert("Marvin Gaye" not in names and "Steely Dan" in names)
+    assert "Marvin Gaye" not in names
+    assert "Steely Dan" in names
+
+def test_classify_recommendation():
+    bridge_signals = ["50% taste shift"]
+    close_signals = ["Jazz fusion influence"]
+    discovery_signals = ["Motown soul depth"]
+
+
+    bridge_result = classify_recommendation(bridge_signals)
+
+    assert bridge_result == "Bridge pick"
+
+    close_result = classify_recommendation(close_signals)
+
+    assert close_result == "Close match"
+
+    discovery_result = classify_recommendation(discovery_signals)
+
+    assert discovery_result == "Discovery pick"
