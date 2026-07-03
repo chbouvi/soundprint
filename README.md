@@ -99,6 +99,24 @@ Create a `backend/.env` file:
 GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
+## Testing
+
+SoundPrint includes backend tests for the recommendation logic.
+
+The tests cover:
+- Filtering artists already in the user's top artists or recommendation seeds
+- Removing duplicate recommendations
+- Limiting recommendations to four artists
+- Handling missing names and invalid signal formats
+- Classifying recommendations as close matches, bridge picks, or discovery picks
+
+Run backend tests with:
+
+```bash
+cd backend
+python3 -m pytest
+```
+
 ## Current Analytics
 
 - Unique artists across top tracks
