@@ -96,6 +96,22 @@ def test_validate_recommendations_handles_bad_signals():
 
     assert [] in signals
 
+def test_validate_recommendations_filters_missing_reason():
+    profile = make_test_profile()
+
+    recommendations = [
+        {"name": "Curtis Mayfield", "reason": "", "signals": ["50% taste shift"]},
+        {"name": "Steely Dan", "reason": "...", "signals": "Jazz fusion influence"},
+        {"name": "Fleetwood Mac", "reason": "...", "signals": ["Art rock complexity"]},
+    ]
+
+    result = validate_recommendations(profile, recommendations)
+
+    names = [recommendation["name"] for recommendation in result]
+
+    assert "Curtis Mayfield" not in names
+    assert "Steely Dan" in names
+    assert "Fleetwood Mac" in names
 
 def test_classify_recommendation():
     bridge_signals = ["50% taste shift"]
