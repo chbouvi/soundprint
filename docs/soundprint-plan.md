@@ -74,8 +74,8 @@ The first complete version of SoundPrint is done when a user can connect their S
 
 ## Recommendation Modes Idea
 
-Possible future labels:
+Completed:
+- Recommended artists are now labeled as close matches, bridge picks, or discovery picks.
 
-- Close match: artists similar to the user's strongest long-term signals
-- Bridge pick: artists that connect recent listening with long-term listening
-- Discovery pick: artists that are less obvious but still connected to the user's taste profile
+Future Improvements:
+- Improve the labels by using more profile metrics, not just the recommendation signals.
