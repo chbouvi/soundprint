@@ -81,6 +81,21 @@ def test_validate_recommendations_limit():
     assert len(names) == 4
     assert "Tame Impala" not in names
 
+def test_validate_recommendations_handles_bad_signals():
+    profile = make_test_profile()
+
+    recommendations = [
+        {"name": "Curtis Mayfield", "reason": "...", "signals": ["50% taste shift"]},
+        {"name": "Steely Dan", "reason": "...", "signals": "Jazz fusion influence"},
+        {"name": "Fleetwood Mac", "reason": "...", "signals": ["Art rock complexity"]},
+    ]
+
+    result = validate_recommendations(profile, recommendations)
+
+    signals = [recommendation["signals"] for recommendation in result]
+
+    assert [] in signals
+
 
 def test_classify_recommendation():
     bridge_signals = ["50% taste shift"]
