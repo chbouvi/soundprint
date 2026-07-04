@@ -10,7 +10,6 @@
 - Backend responses are saved in React state and rendered as dashboard metrics, charts, summaries, and recommendations.
 - Changing the time range resets the entire dashboard and sends new Spotify/backend requests.
 
-
 ## Backend Endpoints
 
 - `/api/analyze-taste` receives top track artist data and returns taste metrics.
@@ -42,6 +41,12 @@
 - The backend validates the AI-generated recommendations by filtering out artists already present in the user's top artists or recommendation seeds, removing duplicates, requiring valid names and reasons, cleaning up signal tags, and limiting the results to four recommendations.
 - Each recommendation receives a fit score and recommendation type (close match, bridge pick, or discovery pick) based on the cleaned signal tags and profile metrics.
 - Score factors are returned so the frontend can explain why each recommended artist received its fit score.
+
+## Backend Tests
+
+- Recommendation validation tests cover blocked artists, missing names, missing reasons, duplicate recommendations, invalid signal formats, and result limits.
+- These tests help make sure Gemini output is cleaned before it reaches the frontend.
+- Recommendation type labels are also tested so close matches, bridge picks, and discovery picks are consistent.
 
 ## Spotify Artist Matching
 
