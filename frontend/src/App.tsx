@@ -81,6 +81,8 @@ type SoundProfileTag = {
   count: number
 }
 
+type RecommendationFeedback = "good_fit" | "already_know" | "not_for_me"
+
 function App() {
   const generateRandomString = (length: number) => {
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -523,6 +525,8 @@ function App() {
 
   const [openScoreDetails, setOpenScoreDetails] = useState<string | null>(null)
 
+  const [recommendationFeedback, setRecommendationFeedback] = useState<Record<string, RecommendationFeedback>>({})
+
   return (
     <main>
       <h1>SoundPrint</h1>
@@ -831,6 +835,46 @@ function App() {
                           <span>+{factor.points}</span>
                         </span>
                       ))}
+
+                      <div className="recommendation-feedback">
+                        <p className="recommendation-feedback-label">Was this useful?</p>
+
+                        <div className="recommendation-feedback-options">
+                          <button className={
+                              recommendationFeedback[recommendedArtist.name] === "good_fit"
+                                ? "recommendation-feedback-button selected"
+                                : "recommendation-feedback-button"
+                            }
+                            onClick={() => {
+                            setRecommendationFeedback({
+                              ...recommendationFeedback,
+                              [recommendedArtist.name]: "good_fit"
+                            })
+                          }}>Good fit </button>
+                          <button className={
+                              recommendationFeedback[recommendedArtist.name] === "already_know"
+                                ? "recommendation-feedback-button selected"
+                                : "recommendation-feedback-button"
+                            }
+                            onClick={() => {
+                            setRecommendationFeedback({
+                              ...recommendationFeedback,
+                              [recommendedArtist.name]: "already_know"
+                            })
+                          }}>Already know</button>
+                          <button className={
+                              recommendationFeedback[recommendedArtist.name] === "not_for_me"
+                                ? "recommendation-feedback-button selected"
+                                : "recommendation-feedback-button"
+                            }
+                            onClick={() => {
+                            setRecommendationFeedback({
+                              ...recommendationFeedback,
+                              [recommendedArtist.name]: "not_for_me"
+                            })
+                          }}>Not for me</button>
+                        </div>
+                      </div>
                     </div>
                   )}
                   <a
