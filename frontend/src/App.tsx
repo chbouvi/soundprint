@@ -703,7 +703,7 @@ function App() {
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={styleTagFrequencyChartData} margin={{ top: 8, right: 24, left: 32, bottom: 8 }} layout="vertical">
                   <XAxis type="number" domain={[0, "dataMax"]} allowDecimals={false} tick={{ fill: "#9ca3af" }} axisLine={false} tickLine={false}/>
-                  <YAxis type="category" dataKey="tag" width={130} interval={0} tick={{ fill: "#9ca3af" }} axisLine={false} tickLine={false}/>
+                  <YAxis type="category" dataKey="tag" width={190} interval={0} tick={{ fill: "#9ca3af" }} axisLine={false} tickLine={false}/>
                   <Tooltip
                     cursor={{ fill: "rgba(156, 163, 175, 0.08)"}}
                     contentStyle={{
