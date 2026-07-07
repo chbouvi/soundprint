@@ -525,7 +525,22 @@ function App() {
 
   const [openScoreDetails, setOpenScoreDetails] = useState<string | null>(null)
 
-  const [recommendationFeedback, setRecommendationFeedback] = useState<Record<string, RecommendationFeedback>>({})
+  const [recommendationFeedback, setRecommendationFeedback] = useState<Record<string, RecommendationFeedback>>(() => {
+    const savedFeedback = localStorage.getItem("recommendationFeedback")
+
+    if (savedFeedback) {
+      return JSON.parse(savedFeedback)
+    }
+
+    return {}
+  })
+
+  useEffect(() => {
+    localStorage.setItem(
+      "recommendationFeedback",
+      JSON.stringify(recommendationFeedback)
+    )
+  }, [recommendationFeedback])
 
   return (
     <main>
