@@ -915,6 +915,9 @@ function App() {
               ))}
             </div>
           )}
+          {!isLoadingRecommendations && (recommendedArtists.length > 0 && visibleRecommendations.length === 0) && (
+            <p>You’ve hidden all current recommendations. Try another time range or clear your feedback to see more.</p>
+          )}
         </section>
       )}
 
