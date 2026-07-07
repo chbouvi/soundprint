@@ -41,6 +41,7 @@
 - The backend validates the AI-generated recommendations by filtering out artists already present in the user's top artists or recommendation seeds, removing duplicates, requiring valid names and reasons, cleaning up signal tags, and limiting the results to four recommendations.
 - Each recommendation receives a fit score and recommendation type (close match, bridge pick, or discovery pick) based on the cleaned signal tags and profile metrics.
 - Score factors are returned so the frontend can explain why each recommended artist received its fit score.
+- The user is able to mark recommendations as a good fit, already known, or not for them. These choices are saved to localStorage and remain when the same artist appears again.
 
 ## Backend Tests
 
