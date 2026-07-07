@@ -525,6 +525,8 @@ function App() {
 
   const [openScoreDetails, setOpenScoreDetails] = useState<string | null>(null)
 
+  const [removedRecommendationMessage, setRemovedRecommendationMessage] = useState("")
+
   const [recommendationFeedback, setRecommendationFeedback] = useState<Record<string, RecommendationFeedback>>(() => {
     const savedFeedback = localStorage.getItem("recommendationFeedback")
 
@@ -541,6 +543,8 @@ function App() {
       JSON.stringify(recommendationFeedback)
     )
   }, [recommendationFeedback])
+
+  const visibleRecommendations = recommendedArtists.filter((recommendedArtist) => recommendationFeedback[recommendedArtist.name] !== "not_for_me")
 
   return (
     <main>
@@ -788,6 +792,12 @@ function App() {
         <section className="recommended-card">
           <h3>Recommended Artists</h3>
 
+          {removedRecommendationMessage && (
+                    <p className="recommendation-feedback-message"> 
+                      {removedRecommendationMessage}
+                    </p>
+          )}
+
           {isLoadingRecommendations && (
             <p>Finding artists you might like...</p>
           )}
@@ -796,9 +806,9 @@ function App() {
             <p>{recommendationError}</p>
           )}
 
-          {!isLoadingRecommendations && recommendedArtists.length > 0 && (
+          {!isLoadingRecommendations && visibleRecommendations.length > 0 && (
             <div className="recommended-list">
-              {recommendedArtists.map(recommendedArtist => (
+              {visibleRecommendations.map(recommendedArtist => (
                 <div className="recommended-artist" key={recommendedArtist.name}>
                   <div className="recommended-header">
                     <div className="recommended-title">
@@ -887,6 +897,7 @@ function App() {
                               ...recommendationFeedback,
                               [recommendedArtist.name]: "not_for_me"
                             })
+                            setRemovedRecommendationMessage(`Removed ${recommendedArtist.name} from recommendations`)
                           }}>Not for me</button>
                         </div>
                       </div>

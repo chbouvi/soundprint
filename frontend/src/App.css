@@ -517,6 +517,13 @@ h2 {
   color: #bfdbfe;
 }
 
+.recommendation-feedback-message {
+  margin: 8px 0px 24px;
+  color: #9ca3af;
+  font-size: 16px;
+  text-align: center;
+}
+
 .recommendation-type {
   display: inline-flex;
   flex-shrink: 0;
