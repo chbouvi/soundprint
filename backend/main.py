@@ -329,6 +329,9 @@ class RecommendArtistsRequest(BaseModel):
     most_repeated_artist: str
     most_repeated_artist_count: int
     unique_genre_count: int
+    good_fit_artists: list[str]
+    already_known_artists: list[str]
+    not_for_me_artists: list[str]
     
 @app.post("/api/recommend-artists")
 def recommend_artists(profile: RecommendArtistsRequest):
@@ -361,6 +364,9 @@ Use this listening profile:
 - Most repeated artist in top tracks: {profile.most_repeated_artist}
 - Most repeated artist count: {profile.most_repeated_artist_count}
 - Unique genre count: {profile.unique_genre_count}
+- Good fit artists: {profile.good_fit_artists}
+- Already known artists: {profile.already_known_artists}
+- Not for me artists: {profile.not_for_me_artists}
 
 Return only JSON in this exact format:
 [
@@ -381,12 +387,15 @@ Rules:
 - Signals should be specific to the user's data, not generic filler.
 - Good signal styles include genre-based labels, seed-artist labels, artist-frequency labels, taste-shift labels, variety labels, or overlap labels.
 - Keep each signal 1-4 words.
+- Use the good fit artists to recommend similar vibes.
+- Use the already known artists to use as a taste signal but avoid recommending the same exact artist.
+- Use the not for me artists to avoid these artists.
 """
 
 def validate_recommendations(profile: RecommendArtistsRequest, recommendations):
     blocked_artist_names = {
         artist_name.strip().lower()
-        for artist_name in profile.top_artists + profile.recommendation_seeds
+        for artist_name in profile.top_artists + profile.recommendation_seeds + profile.not_for_me_artists + profile.already_known_artists
     }
     
     seen_artist_names = set()
