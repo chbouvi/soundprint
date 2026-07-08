@@ -32,7 +32,7 @@ SoundPrint is a Spotify analytics app that helps users understand their music ta
 - Taste timeline comparing short-term, six-month, and all-time artists
 - AI-generated taste summary using Gemini
 - Gemini-generated recommended artists based on listening profile signals
-- Backend cleanup that removes duplicate recommendations and already-known artists
+- Backend cleanup that removes duplicate, already-known, and rejected recommendations
 - Recommendation signal tags explaining why each artist fits
 - Recommendation type labels showing whether an artist is a close match, bridge pick, or discovery pick
 - Direct Spotify artist links for recommended artists, with search fallback when no exact match is found
@@ -40,7 +40,16 @@ SoundPrint is a Spotify analytics app that helps users understand their music ta
 - Spotify artist images on recommended artist cards when an exact artist match is found
 - Clickable recommendation fit scores with explanations
 - AI-generated sound profile breakdown with reusable style tags counted from the user's listening patterns
+- Saved recommendation feedback with an option to clear it
 - Responsive dashboard layout for desktop and narrow screens
+
+## Project Highlights
+
+- Computes taste metrics from Spotify top tracks and artists, including artist variety, repeated artist frequency, top artist overlap, and recent taste shift.
+- Uses Gemini to generate taste summaries, sound profile tags, and artist recommendations from those listening signals.
+- Validates AI recommendations before showing them by removing duplicates, filtering artists the user already knows or rejected, checking required fields, and limiting the final list.
+- Saves recommendation feedback locally and sends it back as context for future recommendations.
+- Includes backend tests for recommendation cleanup, scoring, classification, and feedback filtering.
 
 ## Recommendation System
 
@@ -111,6 +120,7 @@ The tests cover:
 - Limiting recommendations to four artists
 - Handling missing names and invalid signal formats
 - Classifying recommendations as close matches, bridge picks, or discovery picks
+- Filtering recommendations using saved user feedback
 
 Run backend tests with:
 
