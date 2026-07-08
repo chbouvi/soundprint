@@ -351,6 +351,33 @@ h2 {
   box-sizing: border-box;
 }
 
+.recommended-card-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.recommended-card-header h3 {
+  margin: 0;
+}
+
+.clear-feedback {
+  border: 1px solid rgba(156, 163, 175, 0.24);
+  border-radius: 9999px;
+  padding: 6px 10px;
+  background: rgba(156, 163, 175, 0.06);
+  color: #c7ccd4;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+}
+
 .recommended-list {
   display: grid;
   grid-template-columns: 1fr 1fr;

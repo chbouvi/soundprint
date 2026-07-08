@@ -807,7 +807,16 @@ function App() {
 
       {(isLoadingRecommendations || recommendedArtists.length > 0) && (
         <section className="recommended-card">
-          <h3>Recommended Artists</h3>
+          <div className="recommended-card-header">
+            <h3>Recommended Artists</h3>
+
+            <button className="clear-feedback" onClick={() => {
+              setRecommendationFeedback({})
+              setRemovedRecommendationMessage("")
+            }}> 
+              Clear feedback
+            </button>
+          </div>
 
           {removedRecommendationMessage && (
                     <p className="recommendation-feedback-message"> 
