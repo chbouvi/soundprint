@@ -438,6 +438,39 @@ function App() {
 
   const styleTagFrequencyChartData = soundProfile.slice(0, 5)
 
+  const [recommendationFeedback, setRecommendationFeedback] = useState<Record<string, RecommendationFeedback>>(() => {
+    const savedFeedback = localStorage.getItem("recommendationFeedback")
+
+    if (savedFeedback) {
+      return JSON.parse(savedFeedback)
+    }
+
+    return {}
+  })
+
+  const recommendationFeedbackArray = Object.entries(recommendationFeedback)
+
+  const goodFitList = recommendationFeedbackArray
+    .filter(([, feedback]) => feedback === "good_fit")
+    .map(([artistName]) => artistName)
+  
+  const alreadyKnownList = recommendationFeedbackArray
+    .filter(([, feedback]) => feedback === "already_know")
+    .map(([artistName]) => artistName)
+
+  const notForMeList = recommendationFeedbackArray
+    .filter(([, feedback]) => feedback === "not_for_me")
+    .map(([artistName]) => artistName)
+
+  useEffect(() => {
+    localStorage.setItem(
+      "recommendationFeedback",
+      JSON.stringify(recommendationFeedback)
+    )
+  }, [recommendationFeedback])
+
+  const visibleRecommendations = recommendedArtists.filter((recommendedArtist) => recommendationFeedback[recommendedArtist.name] !== "not_for_me")
+
   useEffect(() => {
     if (accessToken && topTracks.length > 0 && topArtists.length > 0 && tasteAnalysis && uniqueRecommendationSeeds.length > 0) {
       setRecommendationError("")
@@ -461,6 +494,9 @@ function App() {
           most_repeated_artist: tasteAnalysis.most_repeated_artist,
           most_repeated_artist_count: tasteAnalysis.most_repeated_artist_count,
           unique_genre_count: uniqueGenreCount,
+          good_fit_artists: goodFitList,
+          already_known_artists: alreadyKnownList,
+          not_for_me_artists: notForMeList,
         })
       })
         .then(response => response.json())
@@ -526,25 +562,6 @@ function App() {
   const [openScoreDetails, setOpenScoreDetails] = useState<string | null>(null)
 
   const [removedRecommendationMessage, setRemovedRecommendationMessage] = useState("")
-
-  const [recommendationFeedback, setRecommendationFeedback] = useState<Record<string, RecommendationFeedback>>(() => {
-    const savedFeedback = localStorage.getItem("recommendationFeedback")
-
-    if (savedFeedback) {
-      return JSON.parse(savedFeedback)
-    }
-
-    return {}
-  })
-
-  useEffect(() => {
-    localStorage.setItem(
-      "recommendationFeedback",
-      JSON.stringify(recommendationFeedback)
-    )
-  }, [recommendationFeedback])
-
-  const visibleRecommendations = recommendedArtists.filter((recommendedArtist) => recommendationFeedback[recommendedArtist.name] !== "not_for_me")
 
   return (
     <main>
