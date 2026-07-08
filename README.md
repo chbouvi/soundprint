@@ -54,7 +54,7 @@ Each recommendation also gets a fit score. The score starts from a base value an
 
 SoundPrint also labels each recommendation as a close match, bridge pick, or discovery pick so the user can tell what kind of suggestion it is.
 
-Users can also mark recommendations as a good fit, already known, or not for them, and SoundPrint saves that feedback locally when the same artist appears again.
+Users can also mark recommendations as a good fit, already known, or not for them, and SoundPrint saves that feedback locally when the same artist appears again. This feedback is also sent to the backend to help give context when generating new recommendations. 
 
 ## Tech Stack
 
