@@ -13,7 +13,10 @@ def make_test_profile():
             top_artist_overlap=3,
             most_repeated_artist="...",
             most_repeated_artist_count=2,
-            unique_genre_count=0
+            unique_genre_count=0,
+            good_fit_artists=["Tame Impala"],
+            already_known_artists=["Thundercat"],
+            not_for_me_artists=["MF Doom"],
         )
 
 def test_score_signal():
@@ -112,6 +115,63 @@ def test_validate_recommendations_filters_missing_reason():
     assert "Curtis Mayfield" not in names
     assert "Steely Dan" in names
     assert "Fleetwood Mac" in names
+
+def test_validate_recommendations_filters_not_for_me():
+    profile = make_test_profile()
+
+    recommendations = [
+        {"name": "Curtis Mayfield", "reason": "...", "signals": ["50% taste shift"]},
+        {"name": "Steely Dan", "reason": "...", "signals": "Jazz fusion influence"},
+        {"name": "Fleetwood Mac", "reason": "...", "signals": ["Art rock complexity"]},
+        {"name": "MF Doom", "reason": "...", "signals": ["2000's rap affinity"]},
+    ]
+
+    result = validate_recommendations(profile, recommendations)
+
+    names = [recommendation["name"] for recommendation in result]
+
+    assert "MF Doom" not in names
+    assert "Steely Dan" in names
+    assert "Fleetwood Mac" in names
+    assert "Curtis Mayfield" in names
+
+def test_validate_recommendations_filters_already_known():
+    profile = make_test_profile()
+
+    recommendations = [
+        {"name": "Curtis Mayfield", "reason": "...", "signals": ["50% taste shift"]},
+        {"name": "Steely Dan", "reason": "...", "signals": "Jazz fusion influence"},
+        {"name": "Fleetwood Mac", "reason": "...", "signals": ["Art rock complexity"]},
+        {"name": "Thundercat", "reason": "...", "signals": ["Funk affinity"]},
+    ]
+
+    result = validate_recommendations(profile, recommendations)
+
+    names = [recommendation["name"] for recommendation in result]
+
+    assert "Thundercat" not in names
+    assert "Steely Dan" in names
+    assert "Fleetwood Mac" in names
+    assert "Curtis Mayfield" in names
+
+def test_validate_recommendations_keeps_good_fit():
+    profile = make_test_profile()
+
+    recommendations = [
+        {"name": "Curtis Mayfield", "reason": "...", "signals": ["50% taste shift"]},
+        {"name": "Steely Dan", "reason": "...", "signals": "Jazz fusion influence"},
+        {"name": "Fleetwood Mac", "reason": "...", "signals": ["Art rock complexity"]},
+        {"name": "Tame Impala", "reason": "...", "signals": ["Psychedelic rock affinity"]},
+    ]
+
+    result = validate_recommendations(profile, recommendations)
+
+    names = [recommendation["name"] for recommendation in result]
+
+    assert "Tame Impala" in names
+    assert "Steely Dan" in names
+    assert "Fleetwood Mac" in names
+    assert "Curtis Mayfield" in names
 
 def test_classify_recommendation():
     bridge_signals = ["50% taste shift"]
