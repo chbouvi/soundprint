@@ -118,6 +118,14 @@ Create a `frontend/.env` file:
 VITE_API_BASE_URL=http://127.0.0.1:8000
 ```
 
+## Deployment Notes
+
+- Set `VITE_API_BASE_URL` in the frontend to the deployed backend URL.
+- Set `FRONTEND_URL` in the backend to the deployed frontend URL.
+- Set `GEMINI_API_KEY` in the backend environment.
+- Add the deployed frontend URL as a Spotify redirect URI.
+- Make sure backend CORS allows the deployed frontend URL.
+
 ## Testing
 
 SoundPrint includes backend tests for the recommendation logic.
