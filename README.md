@@ -91,6 +91,7 @@ Run the backend and frontend in separate terminals.
 
 ```bash
 cd backend
+pip install -r requirements.txt
 python3 -m uvicorn main:app --reload
 ```
 
@@ -108,6 +109,13 @@ Create a `backend/.env` file:
 
 ```env
 GEMINI_API_KEY=your_gemini_api_key_here
+FRONTEND_URL=http://127.0.0.1:5173
+```
+
+Create a `frontend/.env` file:
+
+```env
+VITE_API_BASE_URL=http://127.0.0.1:8000
 ```
 
 ## Testing
