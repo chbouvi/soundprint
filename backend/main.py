@@ -10,9 +10,33 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
+def get_env_value(key: str):
+    if os.environ.get(key):
+        return os.environ[key]
+
+    env_path = Path(__file__).parent / ".env"
+    if not env_path.exists():
+        return None
+
+    for line in env_path.read_text().splitlines():
+        if line.startswith(f"{key}="):
+            return line.split("=", 1)[1].strip()
+
+    return None
+
+def get_allowed_origins():
+    frontend_url = get_env_value("FRONTEND_URL")
+
+    origins = ["http://127.0.0.1:5173"]
+
+    if frontend_url:
+        origins.append(frontend_url)
+    
+    return origins
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5173"],
+    allow_origins=get_allowed_origins(),
     allow_methods=["*"],
     allow_headers=["*"]
 )
@@ -97,20 +121,6 @@ time_range_labels = {
     "medium_term": "last 6 months",
     "long_term": "all time",
 }
-
-def get_env_value(key: str):
-    if os.environ.get(key):
-        return os.environ[key]
-
-    env_path = Path(__file__).parent / ".env"
-    if not env_path.exists():
-        return None
-
-    for line in env_path.read_text().splitlines():
-        if line.startswith(f"{key}="):
-            return line.split("=", 1)[1].strip()
-
-    return None
 
 def create_fallback_sound_profile(profile: TasteSummaryRequest):
     return [
