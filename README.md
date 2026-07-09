@@ -2,6 +2,8 @@
 
 SoundPrint is a Spotify analytics app that helps users understand their music taste through listening metrics, taste timelines, AI summaries, and artist recommendations.
 
+Live demo: https://soundprint-three.vercel.app
+
 ## Screenshots
 
 ### Dashboard Overview
