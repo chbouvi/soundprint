@@ -1,3 +1,63 @@
+.app-shell {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 24px 40px;
+}
+
+.logged-out-shell {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 12vh;
+}
+
+.logged-out-shell h1 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.logged-out-shell h2 {
+  margin-bottom: 20px;
+  max-width: 520px;
+}
+
+.logged-out-shell .connect-spotify {
+  margin-top: 14px;
+  max-width: 640px;
+  color: #9ca3af;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.login-preview {
+  width: min(520px, 100%);
+  margin-top: 28px;
+  opacity: 0.55;
+}
+
+.preview-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.preview-card {
+  height: 68px;
+  border: 1px solid #2d2d36;
+  border-radius: 12px;
+  background:
+    linear-gradient(90deg, rgba(127, 255, 0, 0.18), transparent 55%),
+    #1f1f26;
+}
+
+.preview-card.wide {
+  height: 18px;
+  margin-bottom: 12px;
+  border-radius: 9999px;
+}
+
 h2 {
   color: #d1d5db;
 }

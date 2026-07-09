@@ -565,7 +565,7 @@ function App() {
   const [removedRecommendationMessage, setRemovedRecommendationMessage] = useState("")
 
   return (
-    <main>
+    <main className={accessToken ? "app-shell" : "app-shell logged-out-shell"}>
       <h1>SoundPrint</h1>
       <h2>Your music taste, simplified</h2>
 
@@ -949,7 +949,18 @@ function App() {
       )}
 
       {!accessToken && (
-        <p className="connect-spotify">Connect Spotify to generate your music profile.</p>
+        <p className="connect-spotify">Turn your Spotify listening history into taste metrics and recommendations.</p>
+      )}
+
+      {!accessToken && (
+        <div className="login-preview" aria-hidden="true">
+          <div className="preview-card wide"></div>
+          <div className="preview-row">
+            <div className="preview-card"></div>
+            <div className="preview-card"></div>
+            <div className="preview-card"></div>
+          </div>
+        </div>
       )}
 
       {accessToken && topTracks.length > 0 && topArtists.length > 0 && (
