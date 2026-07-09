@@ -103,6 +103,7 @@ function App() {
       .replace(/\//g, '_');
   }
 
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000"
   const clientId = "fe6329b37eec4232b3732bb7f9d01fc6"
   const redirectUri = "http://127.0.0.1:5173/callback"
   const spotifyAuthUrl = "https://accounts.spotify.com/authorize"
@@ -359,7 +360,7 @@ function App() {
     setIsLoadingAnalysis(true)
     setErrorMessage("")
 
-    fetch("http://127.0.0.1:8000/api/analyze-taste", {
+    fetch(`${apiBaseUrl}/api/analyze-taste`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -391,7 +392,7 @@ function App() {
       setTasteSummaryFallbackReason("")
       setIsTasteSummaryLoading(true)
 
-      fetch("http://127.0.0.1:8000/api/taste-summary", {
+      fetch(`${apiBaseUrl}/api/taste-summary`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -476,7 +477,7 @@ function App() {
       setRecommendationError("")
       setIsLoadingRecommendations(true)
 
-      fetch("http://127.0.0.1:8000/api/recommend-artists", {
+      fetch(`${apiBaseUrl}/api/recommend-artists`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
