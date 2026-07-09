@@ -1,6 +1,9 @@
 # macOS
 .DS_Store
 
+# Interview notes
+soundprint_interview_notes.md
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
