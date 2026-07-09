@@ -105,7 +105,7 @@ function App() {
 
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000"
   const clientId = "fe6329b37eec4232b3732bb7f9d01fc6"
-  const redirectUri = "http://127.0.0.1:5173/callback"
+  const redirectUri = import.meta.env.VITE_SPOTIFY_REDIRECT_URI ?? "http://127.0.0.1:5173/callback"
   const spotifyAuthUrl = "https://accounts.spotify.com/authorize"
   const scope = "user-top-read"
   const responseType = "code"
