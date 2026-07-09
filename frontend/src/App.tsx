@@ -790,7 +790,7 @@ function App() {
 
       {accessToken && tasteAnalysis && (
       <section className="seed-card">
-          <h3>Recommendation Seeds</h3>
+          <h3>Based on your taste</h3>
 
           <div className="seed-list">
             {uniqueRecommendationSeeds.map(seed => (
@@ -801,7 +801,7 @@ function App() {
           </div>
 
           <p className="seed-caption">
-            These artists are the strongest signals in your recommendation profile.
+            These artists help shape your recommendations.
           </p>
       </section>
       )}
